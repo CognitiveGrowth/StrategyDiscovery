@@ -1,0 +1,63 @@
+\begin{thebibliography}{}
+
+\bibitem [\protect \citeauthoryear {%
+Hay%
+, Russell%
+, Tolpin%
+\BCBL {}\ \BBA {} Shimony%
+}{%
+Hay%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2012}}%
+}]{%
+Hay2012}
+\APACinsertmetastar {%
+Hay2012}%
+\begin{APACrefauthors}%
+Hay, N.%
+, Russell, S.%
+, Tolpin, D.%
+\BCBL {}\ \BBA {} Shimony, S.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2012}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Selecting Computations: Theory and Applications}
+  {Selecting computations: Theory and applications}.{\BBCQ}
+\newblock
+\BIn{} N.~de Freitas\ \BBA {} K.~Murphy\ (\BEDS), \APACrefbtitle {Uncertainty
+  in Artificial Intelligence: Proceedings of the Twenty-Eighth Conference.}
+  {Uncertainty in artificial intelligence: Proceedings of the twenty-eighth
+  conference.}
+\newblock
+\APACaddressPublisher{P.O. Box 866 Corvallis, Oregon 97339 USA}{AUAI Press}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Sutton%
+\ \BBA {} Barto%
+}{%
+Sutton%
+\ \BBA {} Barto%
+}{%
+{\protect \APACyear {1998}}%
+}]{%
+Sutton1998}
+\APACinsertmetastar {%
+Sutton1998}%
+\begin{APACrefauthors}%
+Sutton, R\BPBI S.%
+\BCBT {}\ \BBA {} Barto, A\BPBI G.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYear{1998}.
+\newblock
+\APACrefbtitle {Reinforcement learning: An introduction} {Reinforcement
+  learning: An introduction}.
+\newblock
+\APACaddressPublisher{Cambridge, MA, USA}{MIT press}.
+\PrintBackRefs{\CurrentBib}
+
+\end{thebibliography}

@@ -1,0 +1,203 @@
+\begin{thebibliography}{}
+
+\bibitem [\protect \citeauthoryear {%
+Dorigo%
+\ \BBA {} Colombetti%
+}{%
+Dorigo%
+\ \BBA {} Colombetti%
+}{%
+{\protect \APACyear {1994}}%
+}]{%
+Dorigo1994}
+\APACinsertmetastar {%
+Dorigo1994}%
+\begin{APACrefauthors}%
+Dorigo, M.%
+\BCBT {}\ \BBA {} Colombetti, M.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{1994}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Robot shaping: Developing autonomous agents through
+  learning} {Robot shaping: Developing autonomous agents through
+  learning}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Artificial intelligence}{71}{2}{321--370}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Hay%
+, Russell%
+, Tolpin%
+\BCBL {}\ \BBA {} Shimony%
+}{%
+Hay%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2012}}%
+}]{%
+Hay2012}
+\APACinsertmetastar {%
+Hay2012}%
+\begin{APACrefauthors}%
+Hay, N.%
+, Russell, S.%
+, Tolpin, D.%
+\BCBL {}\ \BBA {} Shimony, S.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2012}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Selecting Computations: Theory and Applications}
+  {Selecting computations: Theory and applications}.{\BBCQ}
+\newblock
+\BIn{} N.~de Freitas\ \BBA {} K.~Murphy\ (\BEDS), \APACrefbtitle {Uncertainty
+  in Artificial Intelligence: Proceedings of the Twenty-Eighth Conference.}
+  {Uncertainty in artificial intelligence: Proceedings of the twenty-eighth
+  conference.}
+\newblock
+\APACaddressPublisher{P.O. Box 866 Corvallis, Oregon 97339 USA}{AUAI Press}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Mataric%
+}{%
+Mataric%
+}{%
+{\protect \APACyear {1994}}%
+}]{%
+Mataric1994}
+\APACinsertmetastar {%
+Mataric1994}%
+\begin{APACrefauthors}%
+Mataric, M\BPBI J.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{1994}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Reward functions for accelerated learning} {Reward
+  functions for accelerated learning}.{\BBCQ}
+\newblock
+\BIn{} \APACrefbtitle {Proceedings of the Eleventh International Conference on
+  Machine Learning} {Proceedings of the eleventh international conference on
+  machine learning}\ (\BPGS\ 181--189).
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Ng%
+, Harada%
+\BCBL {}\ \BBA {} Russell%
+}{%
+Ng%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {1999}}%
+}]{%
+Ng1999}
+\APACinsertmetastar {%
+Ng1999}%
+\begin{APACrefauthors}%
+Ng, A\BPBI Y.%
+, Harada, D.%
+\BCBL {}\ \BBA {} Russell, S.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{1999}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Policy invariance under reward transformations: Theory
+  and application to reward shaping} {Policy invariance under reward
+  transformations: Theory and application to reward shaping}.{\BBCQ}
+\newblock
+\BIn{} I.~Bratko\ \BBA {} S.~Dzeroski\ (\BEDS), \APACrefbtitle {{Proceedings of
+  the 16th {A}nnual {I}nternational Conference on Machine Learning}}
+  {{Proceedings of the 16th {A}nnual {I}nternational Conference on Machine
+  Learning}}\ (\BPGS\ 278--287).
+\newblock
+\APACaddressPublisher{San Francisco}{Morgan Kaufmann}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Randl{\o}v%
+\ \BBA {} Alstr{\o}m%
+}{%
+Randl{\o}v%
+\ \BBA {} Alstr{\o}m%
+}{%
+{\protect \APACyear {1998}}%
+}]{%
+Randlov1998}
+\APACinsertmetastar {%
+Randlov1998}%
+\begin{APACrefauthors}%
+Randl{\o}v, J.%
+\BCBT {}\ \BBA {} Alstr{\o}m, P.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{1998}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Learning to Drive a Bicycle Using Reinforcement Learning
+  and Shaping.} {Learning to drive a bicycle using reinforcement learning and
+  shaping.}{\BBCQ}
+\newblock
+\BIn{} \APACrefbtitle {ICML} {Icml}\ (\BVOL~98, \BPGS\ 463--471).
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Saksida%
+, Raymond%
+\BCBL {}\ \BBA {} Touretzky%
+}{%
+Saksida%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {1997}}%
+}]{%
+Saksida1997}
+\APACinsertmetastar {%
+Saksida1997}%
+\begin{APACrefauthors}%
+Saksida, L\BPBI M.%
+, Raymond, S\BPBI M.%
+\BCBL {}\ \BBA {} Touretzky, D\BPBI S.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{1997}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Shaping robot behavior using principles from
+  instrumental conditioning} {Shaping robot behavior using principles from
+  instrumental conditioning}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Robotics and Autonomous Systems}{22}{3}{231--249}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Sutton%
+\ \BBA {} Barto%
+}{%
+Sutton%
+\ \BBA {} Barto%
+}{%
+{\protect \APACyear {1998}}%
+}]{%
+Sutton1998}
+\APACinsertmetastar {%
+Sutton1998}%
+\begin{APACrefauthors}%
+Sutton, R\BPBI S.%
+\BCBT {}\ \BBA {} Barto, A\BPBI G.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYear{1998}.
+\newblock
+\APACrefbtitle {Reinforcement learning: An introduction} {Reinforcement
+  learning: An introduction}.
+\newblock
+\APACaddressPublisher{Cambridge, MA, USA}{MIT press}.
+\PrintBackRefs{\CurrentBib}
+
+\end{thebibliography}

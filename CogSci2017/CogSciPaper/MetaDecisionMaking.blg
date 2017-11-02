@@ -1,0 +1,66 @@
+This is BibTeX, Version 0.99d (TeX Live 2015)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: MetaDecisionMaking.aux
+The style file: apacite.bst
+Illegal, another \bibstyle command---line 5 of file MetaDecisionMaking.aux
+ : \bibstyle
+ :          {apacite}
+I'm skipping whatever remains of this command
+I couldn't open database file flieder-algorithm-selection.big.bib
+---line 6 of file MetaDecisionMaking.aux
+ : \bibdata{gamification,flieder-algorithm-selection.big
+ :                                                      }
+I'm skipping whatever remains of this command
+Reallocated glb_str_ptr (elt_size=4) to 20 items from 10.
+Reallocated global_strs (elt_size=20001) to 20 items from 10.
+Reallocated glb_str_end (elt_size=4) to 20 items from 10.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 9000 items from 6000.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Database file #1: gamification.bib
+apacite.bst [2013/07/21 v6.03 APA bibliography style]
+You've used 2 entries,
+            6951 wiz_defined-function locations,
+            1285 strings with 11117 characters,
+and the built_in function-call counts, 4079 in all, are:
+= -- 527
+> -- 39
+< -- 148
++ -- 170
+- -- 4
+* -- 234
+:= -- 663
+add.period$ -- 10
+call.type$ -- 2
+change.case$ -- 35
+chr.to.int$ -- 0
+cite$ -- 4
+duplicate$ -- 129
+empty$ -- 175
+format.name$ -- 71
+if$ -- 812
+int.to.chr$ -- 0
+int.to.str$ -- 6
+missing$ -- 0
+newline$ -- 58
+num.names$ -- 18
+pop$ -- 119
+preamble$ -- 1
+purify$ -- 8
+quote$ -- 0
+skip$ -- 257
+stack$ -- 0
+substring$ -- 192
+swap$ -- 69
+text.length$ -- 4
+text.prefix$ -- 0
+top$ -- 1
+type$ -- 224
+warning$ -- 0
+while$ -- 25
+width$ -- 0
+write$ -- 74
+(There were 2 error messages)
