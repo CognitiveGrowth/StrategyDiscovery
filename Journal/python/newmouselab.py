@@ -17,7 +17,8 @@ class DistRV(object):
         self.alpha = alpha
         self.attributes = attributes
         self.num_unobs = attributes
-        self.state = np.ones(attributes)*-1
+        self.init = np.ones(attributes)*-1
+        self.state = self.init
         
         if ground_truth is False:
             self.ground_truth = False
@@ -28,6 +29,10 @@ class DistRV(object):
         
     def __repr__(self):
         return 'DistRV(a=' + str(self.alpha) + '): [' + ", ".join(self.print_dist()) + "]" 
+
+    def _reset(self):
+        self.state = self.init
+        return self.state
     
     def print_dist(self):
         return ['{:.3f}'.format(self.state[i]) if self.state[i] != -1 else 'p' +str(i) for i in range(self.attributes)]
@@ -120,6 +125,7 @@ class NewMouselabEnv(gym.Env):
         self.reset()
 
     def _reset(self):
+        self.init[0]._reset()
         self._state = self.init
         grid = np.array(self._state[1]).reshape(self.gambles,self.outcomes)
         self.dist = self.distRV.expectation()
@@ -181,11 +187,11 @@ class NewMouselabEnv(gym.Env):
             s = list(self._state[1])
             gamble = action // self.outcomes
             option = action % self.outcomes
-            # self.mus[gamble] += self.dist[option]*(result - self.reward.expectation())
-            # self.vars[gamble] = max(0,self.vars[gamble] - self.dist[option]**2*self.reward.sigma**2)
-            gambles = self.gamble_dists()
-            self.mus = [expectation(g) for g in gambles]
-            self.vars = [variance(g) for g in gambles]
+            self.mus[gamble] += self.dist[option]*(result - self.reward.expectation())
+            self.vars[gamble] = max(0,self.vars[gamble] - self.dist[option]**2*self.reward.sigma**2)
+            # gambles = self.gamble_dists()
+            # self.mus = [expectation(g) for g in gambles]
+            # self.vars = [variance(g) for g in gambles]
             s[action] = result
             return (self._state[0],tuple(s))
         else:
@@ -221,7 +227,6 @@ class NewMouselabEnv(gym.Env):
         Each outcome is (probability, next_state, reward).
         """
         # May not work with p random variables (at least without quantization)
-        print('this is being run dude')
         if action == self.term_action:
             # R = self.term_reward()
             # S1 = Categorical([self.term_state])
@@ -317,9 +322,10 @@ class NewMouselabEnv(gym.Env):
             e_higher = integrate.quad(lambda x: x*norm.pdf(x,m,s), k, np.inf)[0]
             e_val = k*norm.cdf(k,m,s) + e_higher
         else:
-            grid = np.array(self._state[1]).reshape(self.gambles,self.outcomes)
+            egrid = (np.vectorize(lambda g: expectation(g)) #may need to add otypes=[float]
+                (np.array(self._state[1]))).reshape(self.gambles,self.outcomes)
             sdist = self._state[0].sample_p(action, n = 2500, expectation = True)
-            smus = np.vectorize(lambda g: expectation(g))(sdist.dot(grid.T))
+            smus = sdist.dot(egrid.T)
             e_val = np.mean(np.amax(smus,1))
         return e_val - np.max(self.mus)
 
