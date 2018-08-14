@@ -26,8 +26,8 @@ isHighCompensatory[0] = shuffle([1,1,1,1,1,0,0,0,0,0]);
 isHighCompensatory[1] = shuffle([1,1,1,1,1,0,0,0,0,0]);
 var nr_trials = 20;
 var question_nr=1;
-var nr_questions=8;
-correct_answers = [1,1,0,1,1,0,1,1];
+var nr_questions=6;
+correct_answers = [1,1,0,1,1,1];
 var failed_quiz = new Array();
 var seconds_left = 0;
 var trialTime = new Array;
@@ -38,16 +38,26 @@ var nr_gambles = Math.floor(Math.random() * (range_nr_gambles[1]+1 - range_nr_ga
 for (o=0;o<nr_trials;o++){        
     RTs[o]=fillArray(-1,nr_outcomes*nr_gambles);
 }
-var isFullyRevealed = Math.round(Math.random());
-var tmp_2 = 1;
-if (isFullyRevealed==1){
-    var nr_questions=6;
-    correct_answers = [1,0,1,1,0,1];
+randCond = Math.random();
+if (randCond<(1/3)){
+    var isFullyRevealed = 0;
+    var isHiddenProbability = 0;
+    condStr = '';
+}
+else if (randCond>=(1/3) && randCond<(2/3)){
+    var isFullyRevealed = 1;
+    var isHiddenProbability = 0;
+    var nr_questions=5;
+    correct_answers = [1,0,1,1,1];
     condStr = '_isFullyRevealed';
 }
 else{
-    condStr = '';
+    var isFullyRevealed = 0;
+    var isHiddenProbability = 1;
+    condStr = '_isHiddenProbability';
 }
+//var isFullyRevealed = 1;//Math.round(Math.random());
+//var isHiddenProbability = 0;//Math.round(Math.random());
 
 //
 acquisitions=new Array(nr_blocks);
@@ -88,14 +98,12 @@ function nextQuestion(){
 
 function scoreQuiz(){    
     
-    if ((isFullyRevealed==0 && $("input[name='Quiz1"+"']:checked").val()==correct_answers[0] && 
+    if ((isFullyRevealed==0 && isHiddenProbability==0 && $("input[name='Quiz1"+"']:checked").val()==correct_answers[0] && 
         $("input[name='Quiz2"+"']:checked").val()==correct_answers[1] &&
         $("input[name='Quiz3"+"']:checked").val()==correct_answers[2] &&
         $("input[name='Quiz4"+"']:checked").val()==correct_answers[3] &&
         $("input[name='Quiz5"+"']:checked").val()==correct_answers[4] &&
-        $("input[name='Quiz6"+"']:checked").val()==correct_answers[5] &&
-        $("input[name='Quiz7"+"']:checked").val()==correct_answers[6] &&
-        $("input[name='Quiz8"+"']:checked").val()==correct_answers[7]
+        $("input[name='Quiz6"+"']:checked").val()==correct_answers[5]
        ) ||
         (isFullyRevealed==1 && $("input[name='Quiz1_isFullyRevealed"+"']:checked").val()==correct_answers[0] && 
         $("input[name='Quiz2_isFullyRevealed"+"']:checked").val()==correct_answers[1] &&
@@ -103,7 +111,13 @@ function scoreQuiz(){
         $("input[name='Quiz4_isFullyRevealed"+"']:checked").val()==correct_answers[3] &&
         $("input[name='Quiz5_isFullyRevealed"+"']:checked").val()==correct_answers[4] &&
         $("input[name='Quiz6_isFullyRevealed"+"']:checked").val()==correct_answers[5]
-//        $("input[name='Quiz7_isFullyRevealed"+"']:checked").val()==correct_answers[6]
+       ) ||
+        (isHiddenProbability==1 && $("input[name='Quiz1_isHiddenProbability"+"']:checked").val()==correct_answers[0] && 
+        $("input[name='Quiz2_isHiddenProbability"+"']:checked").val()==correct_answers[1] &&
+        $("input[name='Quiz3_isHiddenProbability"+"']:checked").val()==correct_answers[2] &&
+        $("input[name='Quiz4_isHiddenProbability"+"']:checked").val()==correct_answers[3] &&
+        $("input[name='Quiz5_isHiddenProbability"+"']:checked").val()==correct_answers[4] &&
+        $("input[name='Quiz6_isHiddenProbability"+"']:checked").val()==correct_answers[5]
        ))
     {
         $("#Quiz"+condStr).hide()
@@ -192,12 +206,12 @@ function start_trial2(trial_nr){
         seconds_left = 0;
     }
     else{
-        seconds_left = 30;//30;
+        seconds_left = 25;//30;
     }
     var interval = setInterval(function() {
         //document.getElementById('timer_div').innerHTML = --seconds_left;
         seconds_left--
-        $("#Timer").html(["You must wait at least <b>"+seconds_left+"</b> seconds before betting"]);
+        $("#Timer").html(["You can bet in <b>"+seconds_left+"</b> seconds"]);
 
         if (seconds_left <= 0)
         {
@@ -298,8 +312,8 @@ function choice_buttons_row(nr_choices){
     buttons_row_html="<TR>";
     
     //The first button says "No thanks!"
-    buttons_row_html+=mouselab_cell("a0","Balls:","Balls",false);
-    
+    buttons_row_html+=mouselab_cell("a0","100 Balls:","Balls",false);
+
     for (c=0; c<nr_choices; c++){
         
         button_name="btn_"+(c+1);
@@ -380,15 +394,22 @@ function generateGrid(range_nr_outcomes, range_nr_gambles){
     PRs = new Array(nr_outcomes)
     for (o=0;o<nr_outcomes;o++){        
         payoffs[o]=new Array(nr_gambles);
-        revealed[o] = new Array(nr_gambles);
-        reveal_order[o] = new Array(nr_gambles);
+        revealed[o] = new Array(nr_gambles+1);
+        reveal_order[o] = new Array(nr_gambles+1);
         PRs[o] = new Array(nr_gambles)
+        if (isHiddenProbability==0){
+            revealed[o][0] = 1;
+        }
+        else {
+            revealed[o][0] = 0;
+        }
+        reveal_order[o][0] = 0;         
         for (g=0;g<nr_gambles;g++){
             payoffs[o][g] = parseFloat(Math.round(randn_trunc(payoff_mu,payoff_std,payoff_range)*100)/100).toFixed(2)
             mus[g] = payoff_mu;
             sigmas[g] = payoff_std;
-            revealed[o][g] = isFullyRevealed;
-            reveal_order[o][g] = 0; 
+            revealed[o][g+1] = isFullyRevealed;
+            reveal_order[o][g+1] = 0; 
         }
     }
     // force every probability to be >= 1/100?
@@ -477,20 +498,23 @@ function generateMatrices(probabilities,payoffs,mu,sigma){
             //Probabilities
             name_matrix[r]=[num_abc(r+1)+"0"];
         if (r==0){
-            outside_matrix[r]=[Math.round(100*probabilities[r])+"<font color='yellow'> YELLOW</font>"];// x "+num_abc(r)];
+            outside_matrix[r]=["<font color='yellow'>? YELLOW</font>"];// Math.round(100*probabilities[r])+     x "+num_abc(r)];
+            inside_matrix[r]=[Math.round(100*probabilities[r])+"<font color='yellow'> YELLOW</font>"]; //[Math.round(100*probabilities[r])/100+"%"];
         }
         else if (r==1){
-            outside_matrix[r]=[Math.round(100*probabilities[r])+" <font color='brown'> BROWN</font>"];//<svg height='100' width='100'><circle cx='50' cy='50' r='10' fill='red'/></svg>"];// x "+num_abc(r)];
+            outside_matrix[r]=[" <font color='brown'>? BROWN</font>"];//<svg height='100' width='100'><circle cx='50' cy='50' r='10' fill='red'/></svg>"];// x "+num_abc(r)];
+            inside_matrix[r]=[Math.round(100*probabilities[r])+"<font color='brown'> BROWN</font>"]; //[Math.round(100*probabilities[r])/100+"%"];
         }
         else if (r==2){
-            outside_matrix[r]=[Math.round(100*probabilities[r])+" <font color='blue'> BLUE</font>"];// x "+num_abc(r)];
+            outside_matrix[r]=[" <font color='blue'>? BLUE</font>"];// x "+num_abc(r)];
+            inside_matrix[r]=[Math.round(100*probabilities[r])+"<font color='blue'> BLUE</font>"]; //[Math.round(100*probabilities[r])/100+"%"];
         }
         else if (r==3){
-            outside_matrix[r]=[Math.round(100*probabilities[r])+" <font color='purple'> PURPLE</font>"];// x "+num_abc(r)];
+            outside_matrix[r]=[" <font color='purple'>? PURPLE</font>"];// x "+num_abc(r)];
+            inside_matrix[r]=[Math.round(100*probabilities[r])+"<font color='purple'> PURPLE</font>"]; //[Math.round(100*probabilities[r])/100+"%"];
         }
             
-            inside_matrix[r]=[Math.round(100*probabilities[r])/100+"%"];
-            active_matrix[r]=[false];
+            active_matrix[r]=[true];
             RowOut[r]=r;
         for (c=1;c<nr_columns;c++){
 
@@ -557,7 +581,7 @@ function update_pseudorewards(matrices,dp){
         for (c=0;c<dp.revealed[0].length;c++){
             if (dp.revealed[r][c]){
                 hInd++
-                fn = matrices.names[r][c+1]
+                fn = matrices.names[r][c]
                 eval("HandleTxt"+hInd+"=document.all['"+fn+"_box"+"']");
                 eval("HandleBox"+hInd+"=document.all['"+fn+"_box"+"']");
                 eval("delay=window.setTimeout(\"HandleTxt"+hInd+".style.visibility='visible';HandleBox"+hInd+".style.visibility='hidden';\",dtime)");
@@ -687,7 +711,8 @@ function saveAnswers(){
         payoff_std2: payoff_std2,
         isHighCompensatory: isHighCompensatory,
         failed_quiz: failed_quiz,
-        isFullyRevealed: isFullyRevealed
+        isFullyRevealed: isFullyRevealed,
+        isHiddenProbability: isHiddenProbability
     }
     
     data={           

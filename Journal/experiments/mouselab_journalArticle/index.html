@@ -26,7 +26,7 @@
 //override defaults
     
 // for debugging
-SKIP_INSTRUCTIONS = false;
+SKIP_INSTRUCTIONS = false ;
 
 mlweb_outtype="CSV";
 mlweb_fname="mlwebform";
@@ -139,6 +139,9 @@ nr_points=0;
                 if (isFullyRevealed){
                     $("#Instructions_isFullyRevealed").show();
                 }
+                else if (isHiddenProbability){
+                    $("#Instructions_isHiddenProbability").show();
+                }
                 else{
                     $("#Instructions").show();
                 }
@@ -211,13 +214,18 @@ nr_points=0;
     </div>
 
 </div>
+
+
+    
+
+    
     
 <div id="Instructions" style="display:none;">
 	<h1 align="center">Instructions</h1>
 
     <div id="InstructionsDiv1">
 	<p class="block-text">
-        Welcome! In this HIT you will play a series of 20 betting games. In each game, you will choose one of seven bets. After you have placed your bet, a ball will be drawn from a lottery machine with 100 balls. In the example below, the bin contains 16 yellow balls, 33 brown balls, 18 blue balls, and 33 purple balls. Which kind of ball wins you the most money depends on the bet you chose.
+        Welcome! In this HIT you will play a series of 20 betting games. In each game, you will choose one of seven bets. After you have placed your bet, a ball will be drawn from a lottery machine with <b>100 balls</b>. In the example below, the bin contains 16 yellow balls, 33 brown balls, 18 blue balls, and 33 purple balls. Which kind of ball wins you the most money depends on the bet you chose.
     </p>
         
     <div align="center">
@@ -236,7 +244,7 @@ nr_points=0;
         
     </p>
 	<p class="block-text">
-        <b>The value of each color ball is determined by which of the seven bets you make. Before making a bet, you may observe the value of any type of ball by clicking on the grey box corresponding to it.</b> The value hidden behind each grey box is unique. You may observe as many or as few values as you wish. This may help you decide which bet to make. However, there is a small price to pay for each observation: <b>each observation costs $0.01</b>.
+        <b>The value of each color ball is determined by which of the seven bets you make. Before making a bet, you may observe the value of any type of ball by clicking on the gray box corresponding to it.</b> The value hidden behind each gray box is unique. You may observe as many or as few values as you wish. This may help you decide which bet to make. However, there is a small price to pay for each observation: <b>each observation costs $0.01</b>.
     </p>
         
     <div align="center">
@@ -300,10 +308,10 @@ nr_points=0;
         And Bet 6 wins $2.01 if a purple ball is drawn. You may also wish to explore other values. Note that you have paid $0.04 for making four observations.  
     </p>
 	<p class="block-text">
-        <b>You will be required to wait at least 30 seconds before placing a bet (but you can make observations <i>anytime</i>).</b>
+        <b>If you spend less than 25 seconds making observations, then you will have to wait for the remaining seconds before you can make a bet. For instance, if you spend only 5 seconds collecting information, then you will have to wait 20 seconds.</b>
     </p>
 	<p class="block-text">
-        When you have finished revealing grey boxes, you will select a Bet by clicking on a red box. In this pretend example, let's imagine that you select Bet 3. You would do this by clicking on "Bet 3"...
+        When you have finished revealing gray boxes, you will select a Bet by clicking on a red box. In this pretend example, let's imagine that you select Bet 3. You would do this by clicking on "Bet 3"...
     </p>
         
     <div align="center">
@@ -318,7 +326,7 @@ nr_points=0;
     
 <div id="InstructionsDiv7" style="display:none">
 	<p class="block-text">
-        The outcome was a purple ball, and you would have won $5.49, as indicated by the feedback. For the sake of curiosity, let's see the values that would have been revealed if you had clicked on all of the grey boxes...
+        The outcome was a purple ball, and you would have won $5.49, as indicated by the feedback. For the sake of curiosity, let's see the values that would have been revealed if you had clicked on all of the gray boxes...
     </p>
         
     <div align="center">
@@ -348,7 +356,7 @@ nr_points=0;
     
 <div id="InstructionsDiv9" style="display:none">
 	<p class="block-text">
-        After making a bet, you move-on to a new game. With each new game, <u>the value behind each grey box will change</u>. Also, <u>the number of yellow, brown, blue, and purple balls will change</u>, and therefore the most likely outcome may change, too.
+        After making a bet, you move-on to a new game. With each new game, <u>the value behind each gray box will change</u>. Also, <u>the number of yellow, brown, blue, and purple balls will change</u>, and therefore the most likely outcome may change, too.
     </p>
 	<p class="block-text">
         <b>You will win <u><i>real</i> money</u> for your bets:</b> You will play 20 seperate games, and therefore you will win 20 seperate rewards. At the end of the task, one of these 20 rewards will be randomly selected, and <b>paid to you as real bonus money.</b>
@@ -362,13 +370,13 @@ nr_points=0;
     
 <div id="InstructionsDiv10" style="display:none">
 	<p class="block-text">
-        There are two more important things to understand:
+        An additional two things to understand:
     </p>
 	<p class="block-text">
         <span id='instructions_text'></span>
     </p>
 	<p class="block-text">
-        2. In some games, there will be many more balls of a certain color than of all other colors combined. In the new example below, 89 out of 100 balls are brown. Therefore, a brown ball is much more likely to be drawn than any other ball. That is, for any Bet, 1 thru 7, the most likely outcome will come from the grey box under that bet in the <i>second</i> row.
+        2. <b>In some games, there will be many more balls of a certain color than of all other colors combined.</b> In the new example below, 89 out of 100 balls are brown. Therefore, a brown ball is much more likely to be drawn than any other ball. That is, for any Bet, 1 thru 7, the most likely outcome will come from the gray box under that bet in the <i>second</i> row.
     </p>
         
     <div align="center">
@@ -383,7 +391,7 @@ nr_points=0;
     
 <div id="InstructionsDiv11" style="display:none">
 	<p class="block-text">
-        Let's imagine you clicked on seven grey boxes:
+        Let's imagine you clicked on seven gray boxes:
     </p>
     <div align="center">
         <img src="images/unequalGambleProbs_reveal7.png" width="600">        
@@ -423,6 +431,7 @@ nr_points=0;
         <button onclick="$('#InstructionsDiv13').hide();$('#InstructionsDiv14').show();">Next</button>        
     </div>
 </div>
+    
          
     <div id="InstructionsDiv14" style="display:none">
         <p class="block-text">
@@ -440,7 +449,7 @@ nr_points=0;
 <div id='quiz' style='display:none' class='block-text'>
     <h1>Quiz</h1>
     <div id='question1' class='block-text'>
-        <span id='quiz_intro'> True or false: <p>I can observe as many or as few of the values hidden behind the grey boxes as I wish.</p></span>
+        <span id='quiz_intro'> True or false: <p>You can observe as many or as few of the values hidden behind the gray boxes as you wish.</p></span>
         <table cellpadding='8'>
             <tr>
                 <td> True <input type="radio" name="Quiz1" id='Q1A1' value="1"> </td>
@@ -452,7 +461,7 @@ nr_points=0;
     </div>
     
     <div id='question2' style='display:none' class='block-text'>
-        True or false: <p>The number of balls of each color tells me which color is most likely to be drawn from the bin.</p>
+        True or false: <p>The number of balls of each color tells you which color is most likely to be drawn from the bin.</p>
         <table cellpadding='8'>
             <tr>
                 <td> True <input type="radio" name="Quiz2" id='Q2A1' value="1"> </td>
@@ -464,7 +473,7 @@ nr_points=0;
     </div>
     
     <div id='question3' style='display:none' class='block-text'>
-        True or false: <p>I will play 20 games, but the values hidden behind the grey boxes stay the same across games.</p>
+        True or false: <p>You will play 20 games, but the values hidden behind the gray boxes stay the same across games.</p>
         <table cellpadding='8'>
             <tr>
                 <td> True <input type="radio" name="Quiz3" id='Q3A1' value="1"> </td>
@@ -488,7 +497,7 @@ nr_points=0;
     </div>
     
     <div id='question5' style='display:none' class='block-text'>
-        True or false: <p>In "high-stakes" games, the range of possible values behind the grey boxes is $0.01 to $9.99.</p>
+        True or false: <p>In "high-stakes" games, the range of possible values is $0.01 to $9.99; In "low-stakes" games, the range is $0.01 to $0.25</p>
         <table cellpadding='8'>
             <tr>
                 <td> True <input type="radio" name="Quiz5" id='Q5A1' value="1"> </td>
@@ -500,37 +509,13 @@ nr_points=0;
     </div>
     
     <div id='question6' style='display:none' class='block-text'>
-        True or false: <p>The number of yellow, brown, blue and purple balls in the bin is the same in all 20 games.</p>
+        True or false: <p>The number of yellow, brown, blue and purple balls changes in every round.</p>
         <table cellpadding='8'>
             <tr>
                 <td> True <input type="radio" name="Quiz6" id='Q6A1' value="1"> </td>
             </tr>
             <tr>
                 <td> False <input type="radio" name="Quiz6" id='Q6A2' value="0"> </td>
-            </tr>                  
-        </table>
-    </div>
-    
-    <div id='question7' style='display:none' class='block-text'>
-        True or false: <p>In "low-stakes" games, the highest possible reward is $0.25</p>
-        <table cellpadding='8'>
-            <tr>
-                <td> True <input type="radio" name="Quiz7" id='Q7A1' value="1"> </td>
-            </tr>
-            <tr>
-                <td> False <input type="radio" name="Quiz7" id='Q7A2' value="0"> </td>
-            </tr>                  
-        </table>
-    </div>
-    
-    <div id='question8' style='display:none' class='block-text'>
-        True or false: <p>I can make obsservations anytime during each game, but I must wait at least 30 seconds before betting.</p>
-        <table cellpadding='8'>
-            <tr>
-                <td> True <input type="radio" name="Quiz8" id='Q8A1' value="1"> </td>
-            </tr>
-            <tr>
-                <td> False <input type="radio" name="Quiz8" id='Q8A2' value="0"> </td>
             </tr>                  
         </table>
     </div>
@@ -551,6 +536,394 @@ nr_points=0;
     
     
     
+   
+    
+<!--Hidden probabilities condition    -->
+<div id="Instructions_isHiddenProbability" style="display:none;">
+	<h1 align="center">Instructions</h1>
+
+    <div id="InstructionsDiv1_isHiddenProbability">
+	<p class="block-text">
+        Welcome! In this HIT you will play a series of 20 betting games. In each game, you will choose one of seven bets. After you have placed your bet, a ball will be drawn from a lottery machine with <b>100 balls</b>. In the example below, the bin contains 16 yellow balls, 33 brown balls, 18 blue balls, and 33 purple balls. Which kind of ball wins you the most money depends on the bet you chose.
+    </p>
+        
+    <div align="center">
+        <img src="images/equalGambleProbs.png" width="600">        
+    </div>
+
+        <div align="center">
+            <button onclick="$('#InstructionsDiv1_isHiddenProbability').hide(); $('#InstructionsDiv2_isHiddenProbability').show();">Next</button>        
+        </div>
+  </div>
+    
+  <div id="InstructionsDiv2_isHiddenProbability" style="display:none">
+
+        
+	<p class="block-text">
+        
+    </p>
+	<p class="block-text">
+        <b>The value of each color ball is determined by which of the seven bets you make. Before making a bet, you may observe the value of any type of ball by clicking on the gray box corresponding to it.</b> The value hidden behind each gray box is unique. You may observe as many or as few values as you wish. This may help you decide which bet to make. However, there is a small price to pay for each observation: <b>each observation costs $0.01</b>.
+    </p>
+        
+    <div align="center">
+        <img src="images/equalGambleProbs.png" width="600">        
+    </div>
+      
+        <div align="center">
+            <button onclick="$('#InstructionsDiv2_isHiddenProbability').hide(); $('#InstructionsDiv1_isHiddenProbability').show();">Previous</button>  
+            <button onclick="$('#InstructionsDiv2_isHiddenProbability').hide(); $('#InstructionsDiv3_isHiddenProbability').show();">Next</button>        
+        </div>
+
+    </div>    
+
+  <div id="InstructionsDiv3_isHiddenProbability" style="display:none">
+	<p class="block-text">
+        For example, by clicking on the first box under Bet 6, it is revealed that the 16 yellow balls are each worth $6.96. (But the value of the yellow balls for other bets is different).
+    </p>
+        
+    <div align="center">
+        <img src="images/equalGambleProbs_reveal1.png" width="600">        
+    </div>
+      
+        <div align="center">
+            <button onclick="$('#InstructionsDiv3_isHiddenProbability').hide(); $('#InstructionsDiv2_isHiddenProbability').show();">Previous</button> 
+            <button onclick="$('#InstructionsDiv3_isHiddenProbability').hide(); $('#InstructionsDiv4_isHiddenProbability').show();">Next</button>        
+        </div>
+    </div>  
+    
+  <div id="InstructionsDiv4_isHiddenProbability" style="display:none">
+	<p class="block-text">
+        Clicking on the third box under Bet 2 reveals that Bet 2 wins $5.86 if a blue ball is drawn....
+    </p>
+        
+    <div align="center">
+        <img src="images/equalGambleProbs_reveal2.png" width="600">        
+    </div>
+      
+        <div align="center">
+            <button onclick="$('#InstructionsDiv4_isHiddenProbability').hide(); $('#InstructionsDiv3_isHiddenProbability').show();">Previous</button> 
+            <button onclick="$('#InstructionsDiv4_isHiddenProbability').hide(); $('#InstructionsDiv5_isHiddenProbability').show();">Next</button>        
+        </div>
+    </div>
+    
+  <div id="InstructionsDiv5_isHiddenProbability" style="display:none">
+	<p class="block-text">
+        Bet 2 wins $1.98 if a purple ball is drawn...
+    </p>
+        
+    <div align="center">
+        <img src="images/equalGambleProbs_reveal3.png" width="600">        
+    </div>
+      
+        <div align="center">
+            <button onclick="$('#InstructionsDiv5_isHiddenProbability').hide(); $('#InstructionsDiv4_isHiddenProbability').show();">Previous</button> 
+            <button onclick="$('#InstructionsDiv5_isHiddenProbability').hide(); $('#InstructionsDiv6_isHiddenProbability').show();">Next</button>        
+        </div>
+    </div>
+    
+  <div id="InstructionsDiv6_isHiddenProbability" style="display:none">
+	<p class="block-text">
+        And Bet 6 wins $2.01 if a purple ball is drawn. You may also wish to explore other values. Note that you have paid $0.04 for making four observations.  
+    </p>
+	<p class="block-text">
+        <b>If you spend less than 25 seconds making observations, then you will have to wait for the remaining seconds before you can make a bet. For instance, if you spend only 5 seconds collecting information, then you will have to wait 20 seconds.</b>
+    </p>
+	<p class="block-text">
+        When you have finished revealing gray boxes, you will select a Bet by clicking on a red box. In this pretend example, let's imagine that you select Bet 3. You would do this by clicking on "Bet 3"...
+    </p>
+        
+    <div align="center">
+        <img src="images/equalGambleProbs_reveal4.png" width="600">        
+    </div>
+      
+        <div align="center">
+            <button onclick="$('#InstructionsDiv6_isHiddenProbability').hide(); $('#InstructionsDiv5_isHiddenProbability').show();">Previous</button> 
+            <button onclick="$('#InstructionsDiv6_isHiddenProbability').hide(); $('#InstructionsDiv7_isHiddenProbability').show();">Next</button>        
+        </div>
+    </div>
+    
+<div id="InstructionsDiv7_isHiddenProbability" style="display:none">
+	<p class="block-text">
+        The outcome was a purple ball, and you would have won $5.49, as indicated by the feedback. For the sake of curiosity, let's see the values that would have been revealed if you had clicked on all of the gray boxes...
+    </p>
+        
+    <div align="center">
+        <img src="images/equalGambleProbs_reveal4_outcome.png" width="600">        
+    </div>
+      
+        <div align="center">
+            <button onclick="$('#InstructionsDiv7_isHiddenProbability').hide(); $('#InstructionsDiv6_isHiddenProbability').show();">Previous</button> 
+            <button onclick="$('#InstructionsDiv7_isHiddenProbability').hide();$('#InstructionsDiv8_isHiddenProbability').show();">Next</button>        
+        </div>
+</div>
+    
+<div id="InstructionsDiv8_isHiddenProbability" style="display:none">
+	<p class="block-text">
+        Note that you would pay $0.28 for observing all 28 boxes.
+    </p>
+        
+    <div align="center">
+        <img src="images/equalGambleProbs_revealAll.png" width="600">        
+    </div>
+      
+        <div align="center">
+            <button onclick="$('#InstructionsDiv8_isHiddenProbability').hide(); $('#InstructionsDiv7_isHiddenProbability').show();">Previous</button> 
+            <button onclick="$('#InstructionsDiv8_isHiddenProbability').hide();$('#instructions_text3').html(instructions);$('#InstructionsDiv9_isHiddenProbability').show();">Next</button>        
+        </div>
+</div>
+    
+<div id="InstructionsDiv9_isHiddenProbability" style="display:none">
+	<p class="block-text">
+        After making a bet, you move-on to a new game. With each new game, <u>the value behind each gray box will change</u>. Also, <u>the number of yellow, brown, blue, and purple balls will change</u>, and therefore the most likely outcome may change, too.
+    </p>
+	<p class="block-text">
+        <b>You will win <u><i>real</i> money</u> for your bets:</b> You will play 20 seperate games, and therefore you will win 20 seperate rewards. At the end of the task, one of these 20 rewards will be randomly selected, and <b>paid to you as real bonus money.</b>
+    </p>
+      
+        <div align="center">
+            <button onclick="$('#InstructionsDiv9_isHiddenProbability').hide(); $('#InstructionsDiv8_isHiddenProbability').show();">Previous</button> 
+            <button onclick="$('#InstructionsDiv9_isHiddenProbability').hide();$('#instructions_text3').html(instructions);$('#InstructionsDiv10_isHiddenProbability').show();">Next</button>        
+        </div>
+</div>
+    
+<div id="InstructionsDiv10_isHiddenProbability" style="display:none">
+	<p class="block-text">
+        An additional two things to understand:
+    </p>
+	<p class="block-text">
+        <span id='instructions_text3'></span>
+    </p>
+	<p class="block-text">
+        2. <b>In some games, there will be many more balls of a certain color than of all other colors combined.</b> In the new example below, 89 out of 100 balls are brown. Therefore, a brown ball is much more likely to be drawn than any other ball. That is, for any Bet, 1 thru 7, the most likely outcome will come from the gray box under that bet in the <i>second</i> row.
+    </p>
+        
+    <div align="center">
+        <img src="images/unequalGambleProbs.png" width="600">        
+    </div>
+      
+        <div align="center">
+            <button onclick="$('#InstructionsDiv10_isHiddenProbability').hide(); $('#InstructionsDiv9_isHiddenProbability').show();">Previous</button> 
+            <button onclick="$('#InstructionsDiv10_isHiddenProbability').hide(); $('#InstructionsDiv11_isHiddenProbability').show();">Next</button>        
+        </div>
+</div>
+    
+<div id="InstructionsDiv11_isHiddenProbability" style="display:none">
+	<p class="block-text">
+        Let's imagine you clicked on seven gray boxes:
+    </p>
+    <div align="center">
+        <img src="images/unequalGambleProbs_reveal7.png" width="600">        
+    </div>
+      
+        <div align="center">
+            <button onclick="$('#InstructionsDiv11_isHiddenProbability').hide(); $('#InstructionsDiv10_isHiddenProbability').show();">Previous</button> 
+            <button onclick="$('#InstructionsDiv11_isHiddenProbability').hide();$('#InstructionsDiv12_isHiddenProbability').show();">Next</button>        
+        </div>
+</div>
+    
+<div id="InstructionsDiv12_isHiddenProbability" style="display:none">
+	<p class="block-text">
+        Now let's imagine you clicked on "Bet 5". A brown ball was selected and you won $0.29.
+    </p>
+        
+    <div align="center">
+        <img src="images/unequalGambleProbs_reveal7_outcome.png" width="600">        
+    </div>
+      
+        <div align="center">
+            <button onclick="$('#InstructionsDiv12_isHiddenProbability').hide(); $('#InstructionsDiv11_isHiddenProbability').show();">Previous</button> 
+            <button onclick="$('#InstructionsDiv12_isHiddenProbability').hide();$('#InstructionsDiv13_isHiddenProbability').show();">Next</button>        
+        </div>
+</div>
+    
+ <div id="InstructionsDiv13_isHiddenProbability" style="display:none">
+    <p class="block-text">
+        Below you can see what all of the values were for that game. This game is high-stakes.
+    </p>
+
+<div align="center">
+    <img src="images/unequalGambleProbs_revealAll.png" width="600">        
+</div>
+    <div align="center">
+        <button onclick="$('#InstructionsDiv13_isHiddenProbability').hide(); $('#InstructionsDiv12_isHiddenProbability').show();">Previous</button> 
+        <button onclick="$('#InstructionsDiv13_isHiddenProbability').hide();$('#InstructionsDiv14_isHiddenProbability').show();">Next</button>        
+    </div>
+</div>
+    
+ <div id="InstructionsDiv14_isHiddenProbability" style="display:none">
+    <p class="block-text">
+        One final important thing: <b>The number of balls of each color will also be hidden</b>, as shown below. If you wish to reveal the number of balls for a given color, you can click it. As before, each observation costs $0.01.
+    </p>
+
+<div align="center">
+    <img src="images/unrevealedProbabilities.png" width="600">        
+</div>
+    <div align="center">
+        <button onclick="$('#InstructionsDiv14_isHiddenProbability').hide(); $('#InstructionsDiv13_isHiddenProbability').show();">Previous</button> 
+        <button onclick="$('#InstructionsDiv14_isHiddenProbability').hide();$('#InstructionsDiv15_isHiddenProbability').show();">Next</button>        
+    </div>
+</div>
+    
+ <div id="InstructionsDiv15_isHiddenProbability" style="display:none">
+    <p class="block-text">
+        For example, clicking the first box reveals that 28 out of 100 balls are yellow.
+    </p>
+
+<div align="center">
+    <img src="images/hiddenProbabilities_equal_reveal1.png" width="600">        
+</div>
+    <div align="center">
+        <button onclick="$('#InstructionsDiv15_isHiddenProbability').hide(); $('#InstructionsDiv14_isHiddenProbability').show();">Previous</button> 
+        <button onclick="$('#InstructionsDiv15_isHiddenProbability').hide();$('#InstructionsDiv16_isHiddenProbability').show();">Next</button>        
+    </div>
+</div>
+    
+ <div id="InstructionsDiv16_isHiddenProbability" style="display:none">
+    <p class="block-text">
+        Clicking all four boxes would reveal the numbers shown below. In this game, there are roughly equal numbers of all balls.
+    </p>
+
+<div align="center">
+    <img src="images/hiddenProbabilities_equal_reveal4.png" width="600">        
+</div>
+    <div align="center">
+        <button onclick="$('#InstructionsDiv16_isHiddenProbability').hide(); $('#InstructionsDiv15_isHiddenProbability').show();">Previous</button> 
+        <button onclick="$('#InstructionsDiv16_isHiddenProbability').hide();$('#InstructionsDiv17_isHiddenProbability').show();">Next</button>        
+    </div>
+</div>
+    
+ <div id="InstructionsDiv17_isHiddenProbability" style="display:none">
+    <p class="block-text">
+        In this game, clicking the third box reveals that 86 out of 100 balls are blue. There are many more blue balls than all other balls combined.
+    </p>
+
+<div align="center">
+    <img src="images/hiddenProbabilities_unequal_reveal1.png" width="600">        
+</div>
+    <div align="center">
+        <button onclick="$('#InstructionsDiv17_isHiddenProbability').hide(); $('#InstructionsDiv16_isHiddenProbability').show();">Previous</button> 
+        <button onclick="$('#InstructionsDiv17_isHiddenProbability').hide();$('#InstructionsDiv18_isHiddenProbability').show();">Next</button>        
+    </div>
+</div>
+    
+ <div id="InstructionsDiv18_isHiddenProbability" style="display:none">
+    <p class="block-text">
+        Indeed, with all four probabilities revealed, we can see that a blue ball is by far the most likely outcome.
+    </p>
+
+<div align="center">
+    <img src="images/hiddenProbabilities_unequal_reveal4.png" width="600">        
+</div>
+    <div align="center">
+        <button onclick="$('#InstructionsDiv18_isHiddenProbability').hide(); $('#InstructionsDiv17_isHiddenProbability').show();">Previous</button> 
+        <button onclick="$('#InstructionsDiv18_isHiddenProbability').hide();$('#InstructionsDiv19_isHiddenProbability').show();">Next</button>        
+    </div>
+</div>
+         
+    <div id="InstructionsDiv19_isHiddenProbability" style="display:none">
+        <p class="block-text">
+            You may either review the instructions, or take an entry quiz.
+        </p>         
+         
+        <div align="center">
+            <button onclick="$('#InstructionsDiv19_isHiddenProbability').hide(); $('#InstructionsDiv1_isHiddenProbability').show();">Re-read instructions</button> 
+            <button type="button" id="start" onclick="$('#InstructionsDiv19_isHiddenProbability').hide();$('#Instructions').hide();$('#quiz_isHiddenProbability').show();">Take quiz</button>  
+        </div>
+     </div>
+</div>
+    
+    
+<div id='quiz_isHiddenProbability' style='display:none' class='block-text'>
+    <h1>Quiz</h1>
+    <div id='question1_isHiddenProbability' class='block-text'>
+        <span id='quiz_intro_isHiddenProbability'> True or false: <p>You can observe as many or as few of the values hidden behind the gray boxes as you wish.</p></span>
+        <table cellpadding='8'>
+            <tr>
+                <td> True <input type="radio" name="Quiz1_isHiddenProbability" id='Q1A1_isHiddenProbability' value="1"> </td>
+            </tr>
+            <tr>
+                <td> False <input type="radio" name="Quiz1_isHiddenProbability" id='Q1A2_isHiddenProbability' value="0"> </td>
+            </tr>                  
+        </table>
+    </div>
+    
+    <div id='question2_isHiddenProbability' style='display:none' class='block-text'>
+        True or false: <p>The number of balls of each color tells you which color is most likely to be drawn from the bin. These numbers are hidden, but you can click to observe them (costing $0.01 per observation).</p>
+        <table cellpadding='8'>
+            <tr>
+                <td> True <input type="radio" name="Quiz2_isHiddenProbability" id='Q2A1_isHiddenProbability' value="1"> </td>
+            </tr>
+            <tr>
+                <td> False <input type="radio" name="Quiz2_isHiddenProbability" id='Q2A2_isHiddenProbability' value="0"> </td>
+            </tr>                  
+        </table>
+    </div>
+    
+    <div id='question3_isHiddenProbability' style='display:none' class='block-text'>
+        True or false: <p>You will play 20 games, but the values hidden behind the gray boxes stay the same across games.</p>
+        <table cellpadding='8'>
+            <tr>
+                <td> True <input type="radio" name="Quiz3_isHiddenProbability" id='Q3A1_isHiddenProbability' value="1"> </td>
+            </tr>
+            <tr>
+                <td> False <input type="radio" name="Quiz3_isHiddenProbability" id='Q3A2_isHiddenProbability' value="0"> </td>
+            </tr>                  
+        </table>
+    </div>
+    
+    <div id='question4_isHiddenProbability' style='display:none' class='block-text'>
+        True or false: <p>In some games, the vast majority of balls will be one single color.</p>
+        <table cellpadding='8'>
+            <tr>
+                <td> True <input type="radio" name="Quiz4_isHiddenProbability" id='Q4A1_isHiddenProbability' value="1"> </td>
+            </tr>
+            <tr>
+                <td> False <input type="radio" name="Quiz4_isHiddenProbability" id='Q4A2_isHiddenProbability' value="0"> </td>
+            </tr>                  
+        </table>
+    </div>
+    
+    <div id='question5_isHiddenProbability' style='display:none' class='block-text'>
+        True or false: <p>In "high-stakes" games, the range of possible values is $0.01 to $9.99; In "low-stakes" games, the range is $0.01 to $0.25</p>
+        <table cellpadding='8'>
+            <tr>
+                <td> True <input type="radio" name="Quiz5_isHiddenProbability" id='Q5A1_isHiddenProbability' value="1"> </td>
+            </tr>
+            <tr>
+                <td> False <input type="radio" name="Quiz5_isHiddenProbability" id='Q5A2_isHiddenProbability' value="0"> </td>
+            </tr>                  
+        </table>
+    </div>
+    
+    <div id='question6_isHiddenProbability' style='display:none' class='block-text'>
+        True or false: <p>The number of yellow, brown, blue and purple balls changes in every round, and you can click the gray boxes on the left to find out about them.</p>
+        <table cellpadding='8'>
+            <tr>
+                <td> True <input type="radio" name="Quiz6_isHiddenProbability" id='Q6A1_isHiddenProbability' value="1"> </td>
+            </tr>
+            <tr>
+                <td> False <input type="radio" name="Quiz6_isHiddenProbability" id='Q6A2_isHiddenProbability' value="0"> </td>
+            </tr>                  
+        </table>
+    </div>
+
+    <div align='center'> <button onclick='nextQuestion()'>Next</button></div>
+</div>
+    
+<div id='PassedQuiz_isHiddenProbability' style='display:none; font-size:125%; color:green' class='block-text'>
+    Congratulations! You passed the entry quiz. You are now ready to start the game.
+    <div align='center'><button onclick="$('#PassedQuiz_isHiddenProbability').hide();$('#Gambling').show();end_quizTime();start_experimentTime();start_block()">Play</button></div>
+</div>
+    
+<div id='FailedQuiz_isHiddenProbability' style='display:none; font-size:125%; color:red' class='block-text'>
+    Sorry, but you failed the quiz. Please read the instructions again and retake the quiz. We cannot let you play the game until you have demonstrated that you understand the rules. 
+    <div align='center'><button onclick='$("#FailedQuiz_isHiddenProbability").hide();$("#Instructions_isHiddenProbability").show();$("#InstructionsDiv13_isHiddenProbability").hide();$("#InstructionsDiv1_isHiddenProbability").show();'>Re-read instructions</button></div>
+</div>    
+    
+    
+    
+    
     
     
 <!--================ Fully-revealed control condition-->
@@ -559,7 +932,7 @@ nr_points=0;
 
     <div id="InstructionsDiv_isFullyRevealed1">
 	<p class="block-text">
-        Welcome! In this HIT you will play a series of 20 betting games. In each game, you will choose one of seven bets. After you have placed your bet, a ball will be drawn from a lottery machine with 100 balls. In the example below, the bin contains 16 yellow balls, 33 brown balls, 18 blue balls, and 33 purple balls. Which kind of ball wins you the most money depends on the bet you chose.
+        Welcome! In this HIT you will play a series of 20 betting games. In each game, you will choose one of seven bets. After you have placed your bet, a ball will be drawn from a lottery machine with <b>100 balls</b>. In the example below, the bin contains 16 yellow balls, 33 brown balls, 18 blue balls, and 33 purple balls. Which kind of ball wins you the most money depends on the bet you chose.
     </p>
         
     <div align="center">
@@ -691,13 +1064,13 @@ nr_points=0;
     
 <div id="InstructionsDiv_isFullyRevealed10" style="display:none">
 	<p class="block-text">
-        There are two more important things to understand:
+        An additional two things to understand:
     </p>
 	<p class="block-text">
         <span id='instructions_text2'></span>
     </p>
 	<p class="block-text">
-        2. In some games, there will be many more balls of a certain color than of all other colors combined. In the new example below, 89 out of 100 balls are brown. Therefore, a brown ball is much more likely to be drawn than any other ball. That is, for any Bet, 1 thru 7, the most likely outcome will come from the box under that bet in the <i>second</i> row.
+        2. <b>In some games, there will be many more balls of a certain color than of all other colors combined.</b> In the new example below, 89 out of 100 balls are brown. Therefore, a brown ball is much more likely to be drawn than any other ball. That is, for any Bet, 1 thru 7, the most likely outcome will come from the box under that bet in the <i>second</i> row.
     </p>
         
     <div align="center">
@@ -741,7 +1114,7 @@ nr_points=0;
 <div id='quiz_isFullyRevealed' style='display:none' class='block-text'>
     <h1>Quiz</h1>
     <div id='question1_isFullyRevealed' class='block-text'>
-        <span id='quiz_intro_isFullyRevealed'> True or false: <p>The number of balls of each color tells me which color is most likely to be drawn from the bin.</p></span>
+        <span id='quiz_intro_isFullyRevealed'> True or false: <p>The number of balls of each color tells you which color is most likely to be drawn from the bin.</p></span>
         <table cellpadding='8'>
             <tr>
                 <td> True <input type="radio" name="Quiz1_isFullyRevealed" id='Q1A1_isFullyRevealed' value="1"> </td>
@@ -753,7 +1126,7 @@ nr_points=0;
     </div>
     
     <div id='question2_isFullyRevealed' style='display:none' class='block-text'>
-        True or false: <p>I will play 20 games, but the value of each box stays the same across games.</p>
+        True or false: <p>You will play 20 games, but the values in the boxes stay the same across games.</p>
         <table cellpadding='8'>
             <tr>
                 <td> True <input type="radio" name="Quiz2_isFullyRevealed" id='Q2A1_isFullyRevealed' value="1"> </td>
@@ -777,7 +1150,7 @@ nr_points=0;
     </div>
     
     <div id='question4_isFullyRevealed' style='display:none' class='block-text'>
-        True or false: <p>In "high-stakes" games, the range of possible values behind the grey boxes is $0.01 to $9.99.</p>
+        True or false: <p>In "high-stakes" games, the range of possible values is $0.01 to $9.99; In "low-stakes" games, the range is $0.01 to $0.25</p>
         <table cellpadding='8'>
             <tr>
                 <td> True <input type="radio" name="Quiz4_isFullyRevealed" id='Q4A1_isFullyRevealed' value="1"> </td>
@@ -789,25 +1162,13 @@ nr_points=0;
     </div>
     
     <div id='question5_isFullyRevealed' style='display:none' class='block-text'>
-        True or false: <p>The number of yellow, brown, blue and purple balls in the bin is the same in all 20 games.</p>
+        True or false: <p>The number of yellow, brown, blue and purple balls changes in every round.</p>
         <table cellpadding='8'>
             <tr>
                 <td> True <input type="radio" name="Quiz5_isFullyRevealed" id='Q5A1_isFullyRevealed' value="1"> </td>
             </tr>
             <tr>
                 <td> False <input type="radio" name="Quiz5_isFullyRevealed" id='Q5A2_isFullyRevealed' value="0"> </td>
-            </tr>                  
-        </table>
-    </div>
-    
-    <div id='question6_isFullyRevealed' style='display:none' class='block-text'>
-        True or false: <p>In "low-stakes" games, the highest possible reward is $0.25</p>
-        <table cellpadding='8'>
-            <tr>
-                <td> True <input type="radio" name="Quiz6_isFullyRevealed" id='Q6A1_isFullyRevealed' value="1"> </td>
-            </tr>
-            <tr>
-                <td> False <input type="radio" name="Quiz6_isFullyRevealed" id='Q6A2_isFullyRevealed' value="0"> </td>
             </tr>                  
         </table>
     </div>
