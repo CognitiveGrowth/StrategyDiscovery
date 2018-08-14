@@ -24,10 +24,10 @@ var range_nr_gambles = [7, 7];
 var isHighCompensatory = new Array();
 isHighCompensatory[0] = shuffle([1,1,1,1,1,0,0,0,0,0]);
 isHighCompensatory[1] = shuffle([1,1,1,1,1,0,0,0,0,0]);
-var nr_trials = 4;
+var nr_trials = 20;
 var question_nr=1;
 var nr_questions=6;
-correct_answers = [1,1,0,1,1,0];
+correct_answers = [1,1,0,1,1,1];
 var failed_quiz = new Array();
 var seconds_left = 0;
 var trialTime = new Array;
@@ -38,17 +38,26 @@ var nr_gambles = Math.floor(Math.random() * (range_nr_gambles[1]+1 - range_nr_ga
 for (o=0;o<nr_trials;o++){        
     RTs[o]=fillArray(-1,nr_outcomes*nr_gambles);
 }
-var isFullyRevealed = 0;//Math.round(Math.random());
-var isHiddenProbability = 1;//Math.round(Math.random());
-var tmp_2 = 1;
-if (isFullyRevealed==1){
-    var nr_questions=6;
-    correct_answers = [1,1,0,1,1,0];
+randCond = Math.random();
+if (randCond<(1/3)){
+    var isFullyRevealed = 0;
+    var isHiddenProbability = 0;
+    condStr = '';
+}
+else if (randCond>=(1/3) && randCond<(2/3)){
+    var isFullyRevealed = 1;
+    var isHiddenProbability = 0;
+    var nr_questions=5;
+    correct_answers = [1,0,1,1,1];
     condStr = '_isFullyRevealed';
 }
 else{
-    condStr = '';
+    var isFullyRevealed = 0;
+    var isHiddenProbability = 1;
+    condStr = '_isHiddenProbability';
 }
+//var isFullyRevealed = 1;//Math.round(Math.random());
+//var isHiddenProbability = 0;//Math.round(Math.random());
 
 //
 acquisitions=new Array(nr_blocks);
@@ -89,14 +98,12 @@ function nextQuestion(){
 
 function scoreQuiz(){    
     
-    if ((isFullyRevealed==0 && $("input[name='Quiz1"+"']:checked").val()==correct_answers[0] && 
+    if ((isFullyRevealed==0 && isHiddenProbability==0 && $("input[name='Quiz1"+"']:checked").val()==correct_answers[0] && 
         $("input[name='Quiz2"+"']:checked").val()==correct_answers[1] &&
         $("input[name='Quiz3"+"']:checked").val()==correct_answers[2] &&
         $("input[name='Quiz4"+"']:checked").val()==correct_answers[3] &&
         $("input[name='Quiz5"+"']:checked").val()==correct_answers[4] &&
-        $("input[name='Quiz6"+"']:checked").val()==correct_answers[5] &&
-        $("input[name='Quiz7"+"']:checked").val()==correct_answers[6] &&
-        $("input[name='Quiz8"+"']:checked").val()==correct_answers[7]
+        $("input[name='Quiz6"+"']:checked").val()==correct_answers[5]
        ) ||
         (isFullyRevealed==1 && $("input[name='Quiz1_isFullyRevealed"+"']:checked").val()==correct_answers[0] && 
         $("input[name='Quiz2_isFullyRevealed"+"']:checked").val()==correct_answers[1] &&
@@ -104,7 +111,13 @@ function scoreQuiz(){
         $("input[name='Quiz4_isFullyRevealed"+"']:checked").val()==correct_answers[3] &&
         $("input[name='Quiz5_isFullyRevealed"+"']:checked").val()==correct_answers[4] &&
         $("input[name='Quiz6_isFullyRevealed"+"']:checked").val()==correct_answers[5]
-//        $("input[name='Quiz7_isFullyRevealed"+"']:checked").val()==correct_answers[6]
+       ) ||
+        (isHiddenProbability==1 && $("input[name='Quiz1_isHiddenProbability"+"']:checked").val()==correct_answers[0] && 
+        $("input[name='Quiz2_isHiddenProbability"+"']:checked").val()==correct_answers[1] &&
+        $("input[name='Quiz3_isHiddenProbability"+"']:checked").val()==correct_answers[2] &&
+        $("input[name='Quiz4_isHiddenProbability"+"']:checked").val()==correct_answers[3] &&
+        $("input[name='Quiz5_isHiddenProbability"+"']:checked").val()==correct_answers[4] &&
+        $("input[name='Quiz6_isHiddenProbability"+"']:checked").val()==correct_answers[5]
        ))
     {
         $("#Quiz"+condStr).hide()
@@ -198,7 +211,7 @@ function start_trial2(trial_nr){
     var interval = setInterval(function() {
         //document.getElementById('timer_div').innerHTML = --seconds_left;
         seconds_left--
-        $("#Timer").html(["You can Bet in <b>"+seconds_left+"</b> seconds"]);
+        $("#Timer").html(["You can bet in <b>"+seconds_left+"</b> seconds"]);
 
         if (seconds_left <= 0)
         {
@@ -384,7 +397,12 @@ function generateGrid(range_nr_outcomes, range_nr_gambles){
         revealed[o] = new Array(nr_gambles+1);
         reveal_order[o] = new Array(nr_gambles+1);
         PRs[o] = new Array(nr_gambles)
-        revealed[o][0] = isFullyRevealed;
+        if (isHiddenProbability==0){
+            revealed[o][0] = 1;
+        }
+        else {
+            revealed[o][0] = 0;
+        }
         reveal_order[o][0] = 0;         
         for (g=0;g<nr_gambles;g++){
             payoffs[o][g] = parseFloat(Math.round(randn_trunc(payoff_mu,payoff_std,payoff_range)*100)/100).toFixed(2)
