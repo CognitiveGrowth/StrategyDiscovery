@@ -693,7 +693,7 @@ function saveAnswers(){
     bonus1 = netPay[tmp1[0]];
     tmp2 = shuffle(foo2);
     bonus2 = netPay[tmp2[0]];
-    bonus = Math.max(0,(Math.max(bonus1)+Math.max(bonus2))/2);
+    bonus = Math.max(0,(Math.max(bonus1)+Math.max(bonus2))/4);
     bonus = parseFloat(bonus).toFixed(2);
     
 //    bonus = Math.max(0,netPay[Math.floor(Math.random()*trial_nr_total)+1-1]);
