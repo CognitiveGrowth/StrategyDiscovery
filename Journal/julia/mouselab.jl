@@ -5,7 +5,7 @@ using Memoize
 
 const TERM = 0  # termination action
 const NULL_FEATURES = -1e10 * ones(4)  # features for illegal computation
-
+const N_SAMPLE = 10000
 # =================== Problem =================== #
 
 "Parameters defining a class of mouselab problems."
@@ -105,32 +105,32 @@ end
 emax(x::Float64, c::Float64) = max(x, c)
 
 "Value of knowing the true value of a gamble."
-function voi_gamble(b::Belief, item::Int)
-    item_dists = item_values(b)
-    μ = mean.(item_dists)[:]
-    cv = competing_value(µ, item)
-    emax(item_dists[item], cv) - maximum(μ)
+function voi_gamble(b::Belief, gamble::Int)
+    gamble_dists = gamble_values(b)
+    μ = mean.(gamble_dists)[:]
+    cv = competing_value(µ, gamble)
+    emax(gamble_dists[gamble], cv) - maximum(μ)
 end
 
 "Value of knowing the value in a cell."
 function voi1(b::Belief, cell::Int)
     n_attr, n_gamble = size(b.matrix)
-    item = Int(ceil(cell / n_attr))
+    gamble = Int(ceil(cell / n_attr))
     attr = cell % n_attr
-    col = b.matrix[:, item]
+    col = b.matrix[:, gamble]
     new_dist = sum(b.weights[i] * (i == attr ? d : d.μ)
                    for (i, d) in enumerate(col))
-    item_dists = item_values(b)
-    μ = mean.(item_dists)[:]
-    cv = competing_value(µ, item)
+    gamble_dists = gamble_values(b)
+    μ = mean.(gamble_dists)[:]
+    cv = competing_value(µ, gamble)
     emax(new_dist, cv) - maximum(μ)
 end
 
 "Value of knowing everything."
 function vpi(b::Belief)
-    item_dists = item_values(b)
-    μ = mean.(item_dists)[:]
-    mean(max.((rand(d, n_sample) for d in item_dists)...)) - maximum(μ)
+    gamble_dists = gamble_values(b)
+    μ = mean.(gamble_dists)[:]
+    mean(max.((rand(d, N_SAMPLE) for d in gamble_dists)...)) - maximum(μ)
 end
 
 "Features for every computation in a given belief."

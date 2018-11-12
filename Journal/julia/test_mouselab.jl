@@ -15,12 +15,11 @@ include("mouselab.jl")
 
 
 prm = Params(n_gamble=7, n_attr=4, cost=0.1)
-pol = bmps_policy([0., 0, 0, 1])
-p = Problem(prm)
-b = Belief(p)
+
 # @profiler rollout(p, pol).n_steps
 
 function time_features()
+    p = Problem(prm)
     b = Belief(p)
     println("-"^30, " Timing Features ", "-"^30)
     print("voi1       "); @time voi1(b, 1); nothing
@@ -42,4 +41,7 @@ function test_features()
 end
 
 pol = Policy([0., 0, 0, 1])
-print("rollout time "); @time rollout(p, pol).n_steps; nothing
+print("rollout time "); @time rollout(Problem(prm), pol).n_steps; nothing
+
+b = Belief(Problem(prm))
+@time voi1(b, 1); nothing
