@@ -1,6 +1,6 @@
 % filename=['../data/05302018/DataExp',int2str(experiment_nr),'JSON.csv'];
-experiment_nr = 'pilot_3conditions';
-filename=['../data/',experiment_nr,'/tmp.csv'];
+experiment_nr = '3conditions_300subjects';
+filename=['../data/',experiment_nr,'/experiment_results.csv'];
 % filename_metadata=['../data/',experiment_nr,'/MetaData.csv'];
 
 addpath ../../matlab_code/MatlabTools/parse_json/

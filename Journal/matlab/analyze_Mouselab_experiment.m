@@ -3,7 +3,7 @@ addpath('~/Dropbox/PhD/MatlabTools/')
 addpath('~/Dropbox/PhD/MatlabTools/parse_json/')
 clear
 
-load(['../data/pilot_3conditions/Mouselab_data_Experiment.mat'])
+load(['../data/3conditions_300subjects/Mouselab_data_Experiment.mat'])
 % load(['../data/03242018/Mouselab_data_Experiment2.mat'])
 
 % experiment_nr = 2;
@@ -13,6 +13,19 @@ load(['../data/pilot_3conditions/Mouselab_data_Experiment.mat'])
 %     import_Mouselab_data
 %     pay_bonus
 % end
+
+for s=1:numel(data_by_sub)
+    if data.basic_info{s}.isFullyRevealed == 0 && data.basic_info{s}.isHiddenProbability == 0
+        data.condition(s) = 1;
+    elseif data.basic_info{s}.isFullyRevealed == 1 && data.basic_info{s}.isHiddenProbability == 0
+        data.condition(s) = 2;
+    elseif data.basic_info{s}.isFullyRevealed == 0 && data.basic_info{s}.isHiddenProbability == 1
+        data.condition(s) = 3;
+    else
+        error('!')
+    end
+    data.bonus_(s) = str2num(data.bonus{s});
+end
 
 avg_completion_time = mean([data.experimentTime{:}])/60
 for s=1:numel(data_by_sub)
@@ -235,7 +248,7 @@ for dv=1:numel(DVs)
     ylabel(ylabels{dv},'FontSize',16)
     
     include=not(isnan(dv_data(:)));
-    subject_nr=repmat((1:200)',[1,2,10]);
+    subject_nr=repmat((1:300)',[1,2,10]);
     [p_values(:,dv),anova_table(:,:,dv),anova_stats(dv)]=anovan(dv_data(include(:)),...
         {has_high_dispersion(include(:)),has_high_stakes(include(:)),subject_nr(include(:))},...
         'varnames',{'Dispersion','Stakes','Subject'},...
@@ -267,23 +280,52 @@ ld_ls = and(has_low_stakes(:), ~has_high_dispersion(:));
 hd_hs = and(has_high_stakes(:), has_high_dispersion(:));
 hd_ls = and(has_low_stakes(:), has_high_dispersion(:));
 
-conditions = [hd_hs,ld_hs,hd_ls,ld_ls];
+conditions = [hd_hs,hd_ls,ld_hs,ld_ls];
+nr_trials_exp1 = sum([data.condition]==1)*5;
+nr_trials_exp2 = sum([data.condition]==2)*5;
+nr_trials_per_condition_exp1 = size(conditions,1)/4;
+
+experiment1=repmat([data.condition]==1,[1,2,10]);
+experiment2=repmat([data.condition]==2,[1,2,10]);
 
 nr_subjects = numel(data.bonus);
 trials_per_condition = 5;
 nr_conditions = 4;
 
+% data.consistent_with_SAT_TTB(con1,data.high_dispersion(s,:,:);
+% data.consistent_with_SAT_TTB2
+% data.consistent_with_SAT_TTB3
+% data.consistent_with_TTB
+% data.consistent_with_TTBplus
+% data.consistent_with_random
 for c=1:4
-    table(1,1+c) = sum(data.consistent_with_TTB(conditions(:,c)));
-    table(2,1+c) = sum(data.consistent_with_SAT_TTB(conditions(:,c)));
-    table(3,1+c) = sum(data.consistent_with_random(conditions(:,c)));
-    table(4,1+c) = -1;
-    table(5,1+c) = sum(data.consistent_with_WADD(conditions(:,c)));
-    table(6,1+c) = sum(data.consistent_with_SAT(conditions(:,c)));
+    
+    table1(1,c) = sum(data.consistent_with_SAT_TTB(conditions(:,c)&experiment1(:)))/nr_trials_exp1;
+    table1(2,c) = sum(data.consistent_with_SAT_TTB2(conditions(:,c)&experiment1(:)))/nr_trials_exp1;
+    table1(3,c) = sum(data.consistent_with_SAT_TTB3(conditions(:,c)&experiment1(:)))/nr_trials_exp1;
+    table1(4,c) = sum(data.consistent_with_TTB(conditions(:,c)&experiment1(:)))/nr_trials_exp1;
+    table1(5,c) = sum(data.consistent_with_TTBplus(conditions(:,c)&experiment1(:)))/nr_trials_exp1;
+    table1(6,c) = sum(data.consistent_with_random(conditions(:,c)&experiment1(:)))/nr_trials_exp1;
+    
+    table2(1,c) = sum(data.consistent_with_SAT_TTB(conditions(:,c)&experiment2(:)))/nr_trials_exp2;
+    table2(2,c) = sum(data.consistent_with_SAT_TTB2(conditions(:,c)&experiment2(:)))/nr_trials_exp2;
+    table2(3,c) = sum(data.consistent_with_SAT_TTB3(conditions(:,c)&experiment2(:)))/nr_trials_exp2;
+    table2(4,c) = sum(data.consistent_with_TTB(conditions(:,c)&experiment2(:)))/nr_trials_exp2;
+    table2(5,c) = sum(data.consistent_with_TTBplus(conditions(:,c)&experiment2(:)))/nr_trials_exp2;
+    table2(6,c) = sum(data.consistent_with_random(conditions(:,c)&experiment2(:)))/nr_trials_exp2;
+    
+    
+    
+%     table(1,1+c) = sum(data.consistent_with_TTB(conditions(:,c)));
+%     table(2,1+c) = sum(data.consistent_with_SAT_TTB(conditions(:,c)));
+%     table(3,1+c) = sum(data.consistent_with_random(conditions(:,c)));
+%     table(4,1+c) = -1;
+%     table(5,1+c) = sum(data.consistent_with_WADD(conditions(:,c)));
+%     table(6,1+c) = sum(data.consistent_with_SAT(conditions(:,c)));
 end
-for s=1:6
-    table(s,1)=sum(table(s,2:end));
-end
+% for s=1:6
+%     table(s,1)=sum(table(s,2:end));
+% end
 table
 
 rel_freq = zeros(size(table))
