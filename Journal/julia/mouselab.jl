@@ -63,12 +63,6 @@ Problem(prm::Params) = begin
 end
 computations(p::Problem) = 0:prod(size(p.matrix))
 
-"Value of each gamble according to the true cell values OR a belief.
-    If x is a Belief, a vector of distributions is returned.
-    If x is a Problem, a vector a floats is returned.
-"
-gamble_values(x) = sum(x.weights .* x.matrix, dims=1)
-
 "A belief about the values for a Problem.
     Currently, weights and cost are assumed to be known exactly.
 "
@@ -86,7 +80,7 @@ Belief(p::Problem) = begin
     )
 end
 Base.show(io::IO, mime::MIME"text/plain", b::Belief) = begin
-    X = map(b.matrix) do x
+    X = map(b.matrix) do b
         x.σ < 1e-10 ? round(x.μ; digits=2) : 0
     end
     show(io, mime, X)
@@ -119,14 +113,21 @@ end
 observed(b::Belief, cell::Int) = b.matrix[cell].σ == 1e-20
 unobserved(b::Belief) = filter(c -> !observed(b, c), 1:length(b.matrix))
 
+"Value of each gamble according to a belief"
+function gamble_values(b::Belief)::Vector{Normal{Float64}}
+    sum(b.weights .* b.matrix, dims=1)[:]
+end
+
+
 # =================== Features =================== #
 
 "Define basic arithmetic operations on Normal distributions."
-Base.:*(x::Number, n::Normal) = Normal(x * n.µ, x * n.σ)
-Base.:+(a::Normal, b::Normal) = Normal(a.μ + b.μ, √(a.σ^2 + b.σ^2))
-Base.:+(a::Normal, x::Number) = Normal(a.μ + x, a.σ)
-Base.:+(x::Number, a::Normal) = Normal(a.μ + x, a.σ)
-Base.zero(x::Normal) = Normal(0, 1e-20)
+Base.:*(x::Number, n::Normal)::Normal = Normal(x * n.µ, x * n.σ)
+Base.:*(n::Normal, x::Number)::Normal = Normal(x * n.µ, x * n.σ)
+Base.:+(a::Normal, b::Normal)::Normal = Normal(a.μ + b.μ, √(a.σ^2 + b.σ^2))
+Base.:+(a::Normal, x::Number)::Normal = Normal(a.μ + x, a.σ)
+Base.:+(x::Number, a::Normal)::Normal = Normal(a.μ + x, a.σ)
+Base.zero(x::Normal)::Normal = Normal(0, 1e-20)
 
 "Highest value in x not including x[c]"
 function competing_value(x::Vector{Float64}, c::Int)
@@ -157,6 +158,10 @@ function voi_gamble(b::Belief, gamble::Int)
     cv = competing_value(µ, gamble)
     emax(gamble_dists[gamble], cv) - maximum(μ)
 end
+function voi_gamble(b::Belief, gamble::Int, gamble_dists, μ)
+    cv = competing_value(µ, gamble)
+    emax(gamble_dists[gamble], cv) - maximum(μ)
+end
 
 "Value of knowing the value in a cell."
 function voi1(b::Belief, cell::Int)
@@ -164,7 +169,6 @@ function voi1(b::Belief, cell::Int)
     μ = mean.(gamble_dists)[:]
     return voi1(b, cell, μ)
 end
-
 function voi1(b::Belief, cell::Int, μ::Vector{Float64})::Float64
     n_attr, n_gamble = size(b.matrix)
     gamble = Int(ceil(cell / n_attr))
@@ -186,15 +190,20 @@ function vpi(b::Belief)
     μ = mean.(gamble_dists)[:]
     mean(max.((rand(d, N_SAMPLE) for d in gamble_dists)...)) - maximum(μ)
 end
+function vpi(b::Belief, gamble_dists, μ)::Float64
+    mean(max.((rand(d, N_SAMPLE) for d in gamble_dists)...)) - maximum(μ)
+end
 
 "Features for every computation in a given belief."
 function features(b::Belief)
     n_attr, n_gamble = size(b.matrix)
-    vpi_b = vpi(b)
-    voi_gambles = [voi_gamble(b, g) for g in 1:n_gamble]
+    gamble_dists = gamble_values(b)
+    μ = mean.(gamble_dists)[:]
+    vpi_b = vpi(b, gamble_dists, μ)
+    voi_gambles = [voi_gamble(b, g, gamble_dists, μ) for g in 1:n_gamble]
     phi(cell) = observed(b, cell) ? -1e10 * ones(4) : [
         -1,
-        voi1(b, cell),
+        voi1(b, cell, μ),
         voi_gambles[Int(ceil(cell / n_attr))],
         vpi_b
     ]
@@ -210,7 +219,6 @@ end
 "Selects a computation to perform in a given belief.
     e.g. Policy(θ)(b) -> c
 "
-
 (π::Policy)(b::Belief) = begin
     voc = (π.θ' * features(b))' .- b.cost .+ 1e-10 * rand(length(b.matrix))
     v, c = findmax(voc)
