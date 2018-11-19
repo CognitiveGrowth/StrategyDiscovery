@@ -154,7 +154,7 @@ emax(x::Float64, c::Float64) = max(x, c)
 "Value of knowing the true value of a gamble."
 function voi_gamble(b::Belief, gamble::Int)
     gamble_dists = gamble_values(b)
-    μ = mean.(gamble_dists)[:]
+    μ = mean.(gamble_dists)
     cv = competing_value(µ, gamble)
     emax(gamble_dists[gamble], cv) - maximum(μ)
 end
@@ -166,14 +166,12 @@ end
 "Value of knowing the value in a cell."
 function voi1(b::Belief, cell::Int)
     gamble_dists = gamble_values(b)
-    μ = mean.(gamble_dists)[:]
+    μ = mean.(gamble_dists)
     return voi1(b, cell, μ)
 end
 function voi1(b::Belief, cell::Int, μ::Vector{Float64})::Float64
     n_attr, n_gamble = size(b.matrix)
-    gamble = Int(ceil(cell / n_attr))
-    attr = cell % n_attr
-    col = @view b.matrix[:, gamble]
+    attr, gamble = Tuple(CartesianIndices(size(b.matrix))[cell])
     new_dist = Normal(0, 1e-20)
     for i in 1:n_attr
         d = b.matrix[i, gamble]
@@ -187,18 +185,20 @@ end
 "Value of knowing everything."
 function vpi(b::Belief)
     gamble_dists = gamble_values(b)
-    μ = mean.(gamble_dists)[:]
-    mean(max.((rand(d, N_SAMPLE) for d in gamble_dists)...)) - maximum(μ)
+    μ = mean.(gamble_dists)
+    vpi(b, gamble_dists, μ)
+    # mean(max.((rand(d, N_SAMPLE) for d in gamble_dists)...)) - maximum(μ)
 end
-function vpi(b::Belief, gamble_dists, μ)::Float64
-    mean(max.((rand(d, N_SAMPLE) for d in gamble_dists)...)) - maximum(μ)
+function vpi(b::Belief, gamble_dists::Vector{Normal{Float64}}, μ::Vector{Float64})::Float64
+    samples = (rand(d, N_SAMPLE) for d in gamble_dists)
+    mean(max.(samples...)) - maximum(μ)
 end
 
 "Features for every computation in a given belief."
 function features(b::Belief)
     n_attr, n_gamble = size(b.matrix)
     gamble_dists = gamble_values(b)
-    μ = mean.(gamble_dists)[:]
+    μ = mean.(gamble_dists)
     vpi_b = vpi(b, gamble_dists, μ)
     voi_gambles = [voi_gamble(b, g, gamble_dists, μ) for g in 1:n_gamble]
     phi(cell) = observed(b, cell) ? -1e10 * ones(4) : [

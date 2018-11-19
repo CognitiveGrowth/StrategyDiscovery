@@ -1,47 +1,132 @@
+using Test
 include("mouselab.jl")
 
+const N_PROBLEM = 5
+const N_GAMBLE = 7
+const N_ATTR = 4
+const N_CELL = N_GAMBLE * N_ATTR
+const CELLS = reshape(1:N_CELL, N_ATTR, N_GAMBLE)
+const N_SAMPLE = 10000
+#%% ========== Helpers ==========
+rand_problem() = Problem(Params(
+    reward_dist=Normal(randn(), rand()+0.01),
+    compensatory=rand([true, false])
+))
 
-# prm = Params()
-# p = Problem(prm)
-# b = Belief(p)
-# display(b.weights)
-# pol = bmps_policy([0., 1, 0, 0])
-# w = [0.75, 0.25, 0]
-# b.weights[:] = w
-# voi1_ = reshape(features(b)[2, :], size(b.matrix))
-# @assert sum(abs.(voi1_[:, 1] .- voi1_[:, 2])) < 0.01
-# @assert sum(abs.((voi1_[1, :] ./ voi1_[2, :]) .- w[1] / w[2])) < 0.1
-# @assert sum(voi1_[3, :]) == 0
-
-
-prm = Params(n_gamble=7, n_attr=4, cost=0.1)
-
-# @profiler rollout(p, pol).n_steps
-
-function time_features()
-    p = Problem(prm)
+function rand_belief()
+    p = rand_problem()
     b = Belief(p)
-    println("-"^30, " Timing Features ", "-"^30)
-    print("voi1       "); @time voi1(b, 1); nothing
-    print("voi_gamble "); @time voi_gamble(b, 1)
-    print("vpi        "); @time vpi(b); nothing
-    print("features   "); @time features(b); nothing
-end
-
-time_features()
-
-function test_features()
-    p = Problem(Params())
-    b = Belief(p)
-    for i in eachindex(b.matrix)
-        observe!(b, p, i)
+    clicks = sample(1:N_CELL, rand(1:N_CELL), replace=false)
+    for c in clicks
+        observe!(b, c)
     end
-    display(features(p, b))
-    bmps_policy(Float64[1,1,1,1])(p, b)
+    b
 end
 
-pol = Policy([0., 0, 0, 1])
-print("rollout time "); @time rollout(Problem(prm), pol).n_steps; nothing
+function observe_all(b)
+    b = deepcopy(b)
+    for c in unobserved(b)
+        observe!(b, c)
+    end
+    b
+end
+function observe_all(b, p)
+    b = deepcopy(b)
+    for c in unobserved(b)
+        observe!(b, p, c)
+    end
+    b
+end
 
-b = Belief(Problem(prm))
-@time voi1(b, 1); nothing
+@testset "unobserved" begin
+    for i in 1:N_PROBLEM
+        b = rand_belief()
+        for c in unobserved(b)
+            @test !observed(b, c)
+        end
+        @test rand_belief() |> observe_all |> unobserved |> isempty
+    end
+end
+
+function observe_gamble(b, gamble)
+    b = deepcopy(b)
+    for c in CELLS[:, gamble]
+        if !observed(b, c)
+            observe!(b, c)
+        end
+    end
+    b
+end
+
+#%% ========== Tests ==========
+
+@testset "term_reward" begin
+    for i in 1:N_PROBLEM
+        p = rand_problem()
+        b = Belief(p)
+        @test term_reward(b) ≈ p.prm.reward_dist.μ
+    end
+    for i in 1:N_PROBLEM
+        p = rand_problem()
+        b = observe_all(Belief(p), p)
+        @test term_reward(b) ≈ maximum(p.weights' * p.matrix)
+    end
+end
+include("mouselab.jl")
+@testset "voi1" begin
+    for i in 1:N_PROBLEM
+        b = rand_belief()
+        while isempty(unobserved(b))
+            b = rand_belief()
+        end
+        c = rand(unobserved(b))
+        @test !observed(b, c)
+        base = term_reward(b)
+        mcq = mean(term_reward(observe(b, c)) for i in 1:N_SAMPLE)
+        v = voi1(b, c)
+        @test v >= 0
+        @test mcq - base ≈ v atol=0.01
+    end
+    # b = Belief(rand_problem())
+    # observe!(b, 1)
+    # voi1(b, 1) == 0
+end
+
+
+#%%
+
+@testset "vpi" begin
+    for i in 1:N_PROBLEM
+        b = rand_belief()
+        base = term_reward(b)
+        mcq = mean(term_reward(observe_all(b)) for i in 1:N_SAMPLE)
+        v = vpi(b)
+        @test v >= 0
+        @test mcq - base ≈ v atol=0.01
+    end
+end
+
+@testset "voi_gamble" begin
+    for i in 1:N_PROBLEM
+        # b = rand_belief()
+        b = Belief(Problem(Params()))
+        base = term_reward(b)
+        g = rand(1:N_GAMBLE)
+        mcq = mean(term_reward(observe_gamble(b, g)) for i in 1:N_SAMPLE)
+        v = voi_gamble(b, g)
+        @test v >= 0
+        @test mcq - base ≈ v atol=0.01
+    end
+end
+
+
+#%% ========== Scratch ==========
+
+# @testset "meta greedy" begin
+#     meta_greedy = Policy([0., 1., 0, 0])
+#     for i in 1:N_PROBLEM
+#         b = rand_belief()
+#         expected_return = mean(rollout(meta_greedy, b).reward for i in 1:1000)
+#         @test expected_return >= (term_reward(b) - 0.005)
+#     end
+# end
