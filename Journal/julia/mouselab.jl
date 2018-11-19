@@ -80,8 +80,8 @@ Belief(p::Problem) = begin
     )
 end
 Base.show(io::IO, mime::MIME"text/plain", b::Belief) = begin
-    X = map(b.matrix) do b
-        x.σ < 1e-10 ? round(x.μ; digits=2) : 0
+    X = map(b.matrix) do d
+        d.σ < 1e-10 ? round(d.μ; digits=2) : 0
     end
     show(io, mime, X)
 end
