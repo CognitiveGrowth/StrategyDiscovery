@@ -9,30 +9,35 @@ const μ = mean.(gamble_dists)[:]
 const pol = Policy([0, 0, 0, 1.])
 
 #%%
+println("=============== bench_voi1 ===============")
 function bench_voi1()
     for i in 1:100000
         voi1(b, 1, μ)
     end
 end
+bench_voi1()
 @time bench_voi1()
-@code_warntype voi1(b, 1)
-@inferred voi1(b, 1)
+# @code_warntype voi1(b, 1)
+# @inferred voi1(b, 1)
 # @profiler bench_voi1_opt()
 
 #%%
+println("=============== bench_voi_gamble ===============")
 function bench_voi_gamble()
 
     for i in 1:100000
         voi_gamble(b, 1, gamble_dists, μ)
     end
 end
+bench_voi_gamble()
 @time bench_voi_gamble()
-@code_warntype voi_gamble(b, 1, gamble_dists, μ)
-@inferred voi_gamble(b, 1, gamble_dists, μ)
+# @code_warntype voi_gamble(b, 1, gamble_dists, μ)
+# @inferred voi_gamble(b, 1, gamble_dists, μ)
 # @profiler bench_voi_gamble()
 
 #%%
 include("mouselab.jl")
+println("=============== bench_vpi ===============")
 function bench_vpi(;n=1000)
     for i in 1:n
         vpi(b, gamble_dists, μ)
@@ -41,18 +46,12 @@ end
 
 bench_vpi()
 @time bench_vpi()
-@code_warntype vpi(b)
-@inferred vpi(b)
+# @code_warntype vpi(b)
+# @inferred vpi(b)
 
-mean(max.(samples...))
-mean(max)
-# Profile.init(delay=0.01)
-# Profile.clear()
-# @profiler bench_vpi(n=1000)
-# Profile.print(format=:flat)
-# ProfileView.view()
 
 #%%
+println("=============== bench_pol ===============")
 function bench_pol(b)
     for i in 1:10
         pol(b)
@@ -64,6 +63,7 @@ bench_pol(b)
 
 #%%
 include("mouselab.jl")
+println("=============== bench_roll ===============")
 function bench_roll(;n=10)
     r = 0.
     for i in 1:n
@@ -73,9 +73,11 @@ function bench_roll(;n=10)
 end
 bench_roll()
 @time bench_roll();
+
+using BenchmarkTools
+bench = @benchmark rollout(pol, b)
+display(bench)
 # @profiler bench_roll(b)
-
-
 
 
 #%%
@@ -87,66 +89,65 @@ function observe_all(b)
     b
 end
 
-include("mouselab.jl")
-
-
-@time [features(b; no_vpi=false) for i in 1:1000];
-@time [features(b; no_vpi=true) for i in 1:1000];
-@time features(observe_all(b));
-@time features(b);
-
-const N_CELL= 28
-function rand_belief()
-    clicks = sample(1:N_CELL, rand(1:N_CELL), replace=false)
-    b1 = deepcopy(b)
-    for c in clicks
-        observe!(b1, c)
-    end
-    b1
-end
-
-b1 = rand_belief()
-[voi1(b1, c) for c in 1:N_CELL]
-
-
-#%%
-
-
-
-gamble_dists = gamble_values(b)
-μ = mean.(gamble_dists)[:]
-
-function test()
-    @time vpi(b, gamble_dists, μ)
-    @time samples = [rand(d, N_SAMPLE) for d in gamble_dists]
-    @time mean(max.(samples...)) - maximum(μ)
-end
-@time vpi(b)
-
-
-#%%
-gamble_dists = gamble_values(b)
-μ = mean.(gamble_dists)[:]
-const RANDN = randn(7, N_SAMPLE)
-function vpi2(b, gamble_dists, μ)
-    μ_g = [d.μ for d in gamble_dists]
-    σ_g = [d.σ for d in gamble_dists]
-    mean(maximum(μ_g .+ RANDN .* σ_g, dims=1)) - maximum(μ)
-end
-@time [vpi2(b, gamble_dists, μ) for i in 1:100];
-@time [vpi(b, gamble_dists, μ) for i in 1:100];
-
-
-μ_g = [d.μ for d in gamble_dists]
-σ_g = [d.σ for d in gamble_dists]
-
-
-x = randn(100)
-y = randn(100)
-d = gamble_dists[1]
-x = randn(10)
-y = randn(10)
-max.(x, y)
-max(x, y)
-
-vpi(b)
+#
+#
+# @time [features(b; no_vpi=false) for i in 1:1000];
+# @time [features(b; no_vpi=true) for i in 1:1000];
+# @time features(observe_all(b));
+# @time features(b);
+#
+# const N_CELL= 28
+# function rand_belief()
+#     clicks = sample(1:N_CELL, rand(1:N_CELL), replace=false)
+#     b1 = deepcopy(b)
+#     for c in clicks
+#         observe!(b1, c)
+#     end
+#     b1
+# end
+#
+# b1 = rand_belief()
+# [voi1(b1, c) for c in 1:N_CELL]
+#
+#
+# #%%
+#
+#
+#
+# gamble_dists = gamble_values(b)
+# μ = mean.(gamble_dists)[:]
+#
+# function test()
+#     @time vpi(b, gamble_dists, μ)
+#     @time samples = [rand(d, N_SAMPLE) for d in gamble_dists]
+#     @time mean(max.(samples...)) - maximum(μ)
+# end
+# @time vpi(b)
+#
+#
+# #%%
+# gamble_dists = gamble_values(b)
+# μ = mean.(gamble_dists)[:]
+# const RANDN = randn(7, N_SAMPLE)
+# function vpi2(b, gamble_dists, μ)
+#     μ_g = [d.μ for d in gamble_dists]
+#     σ_g = [d.σ for d in gamble_dists]
+#     mean(maximum(μ_g .+ RANDN .* σ_g, dims=1)) - maximum(μ)
+# end
+# @time [vpi2(b, gamble_dists, μ) for i in 1:100];
+# @time [vpi(b, gamble_dists, μ) for i in 1:100];
+#
+#
+# μ_g = [d.μ for d in gamble_dists]
+# σ_g = [d.σ for d in gamble_dists]
+#
+#
+# x = randn(100)
+# y = randn(100)
+# d = gamble_dists[1]
+# x = randn(10)
+# y = randn(10)
+# max.(x, y)
+# max(x, y)
+#
+# vpi(b)

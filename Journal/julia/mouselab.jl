@@ -227,7 +227,7 @@ end
 end
 
 "Runs a Policy on a Problem."
-function rollout(p::Problem, π::Policy; initial_belief=nothing, max_steps=100, belief_log=nothing)
+function rollout(p::Problem, π::Policy; initial_belief=nothing, max_steps=100, callback=nothing)
     b = initial_belief != nothing ? initial_belief : Belief(p)
     reward = 0
     computations = []
