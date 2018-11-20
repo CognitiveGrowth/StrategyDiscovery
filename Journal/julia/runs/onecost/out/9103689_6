@@ -1,0 +1,58 @@
+┌ Warning: Module VersionParsing with build ID 9893731226456015 is missing from the cache.
+│ This may mean VersionParsing [81def892-9a0e-5fdd-b105-ffc91e053289] does not support precompilation but is imported by a module that does.
+└ @ Base loading.jl:941
+┌ Warning: The call to compilecache failed to create a usable precompiled cache file for VersionParsing [81def892-9a0e-5fdd-b105-ffc91e053289]
+│   exception = ArgumentError: Invalid checksum in cache file /usr/people/flc2/.julia/compiled/v1.0/VersionParsing/VBbTm.ji.
+└ @ Base loading.jl:963
+┌ Warning: The call to compilecache failed to create a usable precompiled cache file for PyCall [438e738f-606a-5dbb-bf0a-cddfbfd45ab0]
+│   exception = Required dependency VersionParsing [81def892-9a0e-5fdd-b105-ffc91e053289] failed to load from a cache file.
+└ @ Base loading.jl:963
+┌ Warning: The call to compilecache failed to create a usable precompiled cache file for PyCall [438e738f-606a-5dbb-bf0a-cddfbfd45ab0]
+│   exception = Required dependency VersionParsing [81def892-9a0e-5fdd-b105-ffc91e053289] failed to load from a cache file.
+└ @ Base loading.jl:963
+┌ Warning: The call to compilecache failed to create a usable precompiled cache file for PyCall [438e738f-606a-5dbb-bf0a-cddfbfd45ab0]
+│   exception = Required dependency VersionParsing [81def892-9a0e-5fdd-b105-ffc91e053289] failed to load from a cache file.
+└ @ Base loading.jl:963
+┌ Warning: The call to compilecache failed to create a usable precompiled cache file for PyCall [438e738f-606a-5dbb-bf0a-cddfbfd45ab0]
+│   exception = Required dependency VersionParsing [81def892-9a0e-5fdd-b105-ffc91e053289] failed to load from a cache file.
+└ @ Base loading.jl:963
+ERROR: On worker 5:
+LoadError: MethodError: no method matching getindex(::ErrorException, ::Int64)
+_include_from_serialized at ./loading.jl:615
+_require_from_serialized at ./loading.jl:678
+macro expansion at ./logging.jl:317 [inlined]
+_require at ./loading.jl:941
+require at ./loading.jl:852
+macro expansion at ./logging.jl:311 [inlined]
+require at ./loading.jl:834
+include at ./boot.jl:317 [inlined]
+include_relative at ./loading.jl:1038
+include at ./sysimg.jl:29
+#116 at /buildworker/worker/package_linux64/build/usr/share/julia/stdlib/v1.0/Distributed/src/process_messages.jl:276
+run_work_thunk at /buildworker/worker/package_linux64/build/usr/share/julia/stdlib/v1.0/Distributed/src/process_messages.jl:56
+run_work_thunk at /buildworker/worker/package_linux64/build/usr/share/julia/stdlib/v1.0/Distributed/src/process_messages.jl:65
+#102 at ./task.jl:259
+in expression starting at /mnt/bucket/labs/griffiths/people/flc2/StrategyDiscovery/Journal/julia/optimize.jl:7
+#remotecall_wait#154(::Base.Iterators.Pairs{Union{},Union{},Tuple{},NamedTuple{(),Tuple{}}}, ::Function, ::Function, ::Distributed.Worker, ::Module, ::Vararg{Any,N} where N) at /buildworker/worker/package_linux64/build/usr/share/julia/stdlib/v1.0/Distributed/src/remotecall.jl:407
+remotecall_wait(::Function, ::Distributed.Worker, ::Module, ::Vararg{Any,N} where N) at /buildworker/worker/package_linux64/build/usr/share/julia/stdlib/v1.0/Distributed/src/remotecall.jl:398
+#remotecall_wait#157(::Base.Iterators.Pairs{Union{},Union{},Tuple{},NamedTuple{(),Tuple{}}}, ::Function, ::Function, ::Int64, ::Module, ::Vararg{Any,N} where N) at /buildworker/worker/package_linux64/build/usr/share/julia/stdlib/v1.0/Distributed/src/remotecall.jl:419
+remotecall_wait(::Function, ::Int64, ::Module, ::Vararg{Any,N} where N) at /buildworker/worker/package_linux64/build/usr/share/julia/stdlib/v1.0/Distributed/src/remotecall.jl:419
+#invokelatest#1 at ./essentials.jl:686 [inlined]
+invokelatest at ./essentials.jl:685 [inlined]
+(::getfield(Base, Symbol("##717#719")))() at ./task.jl:259
+Stacktrace:
+ [1] sync_end(::Array{Any,1}) at ./task.jl:226
+ [2] exec_options(::Base.JLOptions) at ./client.jl:228
+ [3] _start() at ./client.jl:421
+      From worker 5:	┌ Warning: Module VersionParsing with build ID 9893728711796855 is missing from the cache.
+      From worker 5:	│ This may mean VersionParsing [81def892-9a0e-5fdd-b105-ffc91e053289] does not support precompilation but is imported by a module that does.
+      From worker 5:	└ @ Base loading.jl:941
+      From worker 4:	┌ Warning: Module VersionParsing with build ID 9782365251638726 is missing from the cache.
+      From worker 4:	│ This may mean VersionParsing [81def892-9a0e-5fdd-b105-ffc91e053289] does not support precompilation but is imported by a module that does.
+      From worker 4:	└ @ Base loading.jl:941
+      From worker 3:	┌ Warning: Module VersionParsing with build ID 9893729186086729 is missing from the cache.
+      From worker 3:	│ This may mean VersionParsing [81def892-9a0e-5fdd-b105-ffc91e053289] does not support precompilation but is imported by a module that does.
+      From worker 3:	└ @ Base loading.jl:941
+      From worker 2:	┌ Warning: Module VersionParsing with build ID 9893728711796855 is missing from the cache.
+      From worker 2:	│ This may mean VersionParsing [81def892-9a0e-5fdd-b105-ffc91e053289] does not support precompilation but is imported by a module that does.
+      From worker 2:	└ @ Base loading.jl:941

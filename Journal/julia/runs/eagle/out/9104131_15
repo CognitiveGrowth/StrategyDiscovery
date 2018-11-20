@@ -1,0 +1,115 @@
+Params
+  n_gamble: Int64 7
+  n_attr: Int64 4
+  reward_dist: Normal{Float64}
+  compensatory: Bool true
+  cost: Float64 0.01
+
+reward = 0.130   seconds = 6.731
+reward = 0.130   seconds = 0.513
+reward = 0.127   seconds = 1.466
+reward = 0.130   seconds = 0.498
+reward = 0.115   seconds = 2.626
+reward = 0.130   seconds = 0.501
+reward = 0.130   seconds = 0.541
+reward = 0.130   seconds = 0.497
+reward = 0.130   seconds = 0.475
+reward = 0.130   seconds = 0.517
+reward = 0.130   seconds = 0.462
+reward = 0.130   seconds = 0.535
+reward = 0.130   seconds = 0.574
+reward = 0.130   seconds = 0.659
+reward = 0.130   seconds = 0.546
+reward = 0.130   seconds = 0.533
+reward = 0.130   seconds = 0.542
+reward = 0.130   seconds = 0.565
+reward = 0.116   seconds = 2.500
+reward = 0.130   seconds = 0.512
+reward = 0.127   seconds = 1.758
+reward = 0.130   seconds = 0.834
+reward = 0.130   seconds = 0.530
+reward = 0.109   seconds = 2.709
+reward = 0.130   seconds = 0.562
+reward = 0.130   seconds = 0.497
+reward = 0.130   seconds = 0.538
+reward = 0.130   seconds = 0.541
+reward = 0.130   seconds = 0.525
+reward = 0.128   seconds = 0.773
+reward = 0.130   seconds = 0.497
+reward = 0.130   seconds = 0.560
+reward = 0.130   seconds = 0.528
+reward = 0.130   seconds = 0.533
+reward = 0.130   seconds = 0.564
+reward = 0.130   seconds = 0.542
+reward = 0.130   seconds = 0.548
+reward = 0.130   seconds = 0.536
+reward = 0.131   seconds = 0.755
+reward = 0.130   seconds = 0.515
+reward = 0.130   seconds = 0.549
+reward = 0.130   seconds = 0.534
+reward = 0.130   seconds = 0.543
+reward = 0.130   seconds = 0.826
+reward = 0.130   seconds = 0.579
+reward = 0.130   seconds = 0.520
+reward = 0.130   seconds = 0.535
+reward = 0.130   seconds = 0.557
+reward = 0.130   seconds = 0.531
+reward = 0.130   seconds = 0.549
+reward = 0.130   seconds = 0.538
+reward = 0.130   seconds = 0.549
+reward = 0.128   seconds = 1.549
+reward = 0.130   seconds = 0.653
+reward = 0.130   seconds = 0.549
+reward = 0.130   seconds = 0.520
+reward = 0.130   seconds = 0.560
+reward = 0.130   seconds = 0.521
+reward = 0.113   seconds = 2.653
+reward = 0.130   seconds = 0.556
+reward = 0.127   seconds = 1.630
+reward = 0.127   seconds = 1.635
+reward = 0.130   seconds = 0.520
+reward = 0.130   seconds = 0.542
+reward = 0.130   seconds = 0.540
+reward = 0.130   seconds = 0.521
+reward = 0.130   seconds = 0.542
+reward = 0.130   seconds = 0.539
+reward = 0.125   seconds = 1.868
+reward = 0.130   seconds = 0.533
+reward = 0.130   seconds = 0.547
+reward = 0.130   seconds = 0.527
+reward = 0.130   seconds = 0.809
+reward = 0.130   seconds = 0.557
+reward = 0.130   seconds = 0.526
+reward = 0.130   seconds = 0.541
+reward = 0.128   seconds = 1.569
+reward = 0.130   seconds = 0.550
+reward = 0.130   seconds = 0.522
+reward = 0.130   seconds = 0.545
+reward = 0.130   seconds = 0.522
+reward = 0.130   seconds = 0.541
+reward = 0.130   seconds = 0.535
+reward = 0.130   seconds = 0.533
+reward = 0.130   seconds = 0.547
+reward = 0.130   seconds = 0.510
+reward = 0.130   seconds = 0.569
+reward = 0.130   seconds = 0.548
+reward = 0.125   seconds = 1.728
+reward = 0.130   seconds = 0.534
+reward = 0.130   seconds = 0.524
+reward = 0.130   seconds = 0.543
+reward = 0.130   seconds = 0.543
+reward = 0.130   seconds = 0.657
+reward = 0.130   seconds = 0.562
+reward = 0.130   seconds = 0.595
+reward = 0.130   seconds = 0.553
+reward = 0.130   seconds = 0.564
+reward = 0.125   seconds = 1.794
+reward = 0.130   seconds = 0.777
+reward = 0.131   seconds = 0.736
+reward = 0.130   seconds = 0.548
+reward = 0.130   seconds = 0.547
+reward = 0.130   seconds = 0.795
+reward = 0.130   seconds = 0.616
+143.406297 seconds (11.14 M allocations: 719.345 MiB, 0.33% gc time)
+THETA: [0.000464562, 0.910893, 0.0863001, 0.00280692]
+Wrote runs/eagle/results/opt-3-7-4-0.13-0.072-true-0.01.jld

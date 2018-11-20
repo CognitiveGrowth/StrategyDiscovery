@@ -1,0 +1,270 @@
+WARNING: could not import Base.lcfirst into LegacyStrings
+WARNING: could not import Base.next into LegacyStrings
+WARNING: could not import Base.rsearch into LegacyStrings
+WARNING: could not import Base.search into LegacyStrings
+WARNING: could not import Base.ucfirst into LegacyStrings
+WARNING: redefining constant NULL_FEATURES
+WARNING: redefining constant NULL_FEATURES
+WARNING: redefining constant NULL_FEATURES
+WARNING: redefining constant NULL_FEATURES
+┌ Warning: The call to compilecache failed to create a usable precompiled cache file for JLD [4138dd39-2aa7-5051-a626-17a0bb65d9c8]
+│   exception = Required dependency FileIO [5789e2e9-d7fb-5bc7-8068-2c6fae9b9549] failed to load from a cache file.
+└ @ Base loading.jl:963
+┌ Warning: The call to compilecache failed to create a usable precompiled cache file for JLD [4138dd39-2aa7-5051-a626-17a0bb65d9c8]
+│   exception = Required dependency FileIO [5789e2e9-d7fb-5bc7-8068-2c6fae9b9549] failed to load from a cache file.
+└ @ Base loading.jl:963
+┌ Warning: The call to compilecache failed to create a usable precompiled cache file for JLD [4138dd39-2aa7-5051-a626-17a0bb65d9c8]
+│   exception = Required dependency LegacyStrings [1b4a561d-cfcb-5daf-8433-43fcf8b4bea3] failed to load from a cache file.
+└ @ Base loading.jl:963
+┌ Warning: The call to compilecache failed to create a usable precompiled cache file for JLD [4138dd39-2aa7-5051-a626-17a0bb65d9c8]
+│   exception = Required dependency FileIO [5789e2e9-d7fb-5bc7-8068-2c6fae9b9549] failed to load from a cache file.
+└ @ Base loading.jl:963
+ERROR: type parameters with objects of type NTuple{4,Symbol} are currently unsupported
+      From worker 3:	WARNING: could not import Base.lcfirst into LegacyStrings
+      From worker 3:	WARNING: could not import Base.next into LegacyStrings
+      From worker 3:	WARNING: could not import Base.rsearch into LegacyStrings
+      From worker 3:	WARNING: could not import Base.search into LegacyStrings
+      From worker 3:	WARNING: could not import Base.ucfirst into LegacyStrings
+      From worker 4:	WARNING: could not import Base.lcfirst into LegacyStrings
+      From worker 4:	WARNING: could not import Base.next into LegacyStrings
+      From worker 4:	WARNING: could not import Base.rsearch into LegacyStrings
+      From worker 4:	WARNING: could not import Base.search into LegacyStrings
+      From worker 4:	WARNING: could not import Base.ucfirst into LegacyStrings
+      From worker 5:	WARNING: could not import Base.lcfirst into LegacyStrings
+      From worker 5:	WARNING: could not import Base.next into LegacyStrings
+      From worker 5:	WARNING: could not import Base.rsearch into LegacyStrings
+      From worker 5:	WARNING: could not import Base.search into LegacyStrings
+      From worker 5:	WARNING: could not import Base.ucfirst into LegacyStrings
+      From worker 2:	WARNING: could not import Base.lcfirst into LegacyStrings
+      From worker 2:	WARNING: could not import Base.next into LegacyStrings
+      From worker 2:	WARNING: could not import Base.rsearch into LegacyStrings
+      From worker 2:	WARNING: could not import Base.search into LegacyStrings
+      From worker 2:	WARNING: could not import Base.ucfirst into LegacyStrings
+      From worker 4:	WARNING: redefining constant NULL_FEATURES
+      From worker 2:	WARNING: redefining constant NULL_FEATURES
+      From worker 3:	WARNING: redefining constant NULL_FEATURES
+      From worker 2:	WARNING: redefining constant NULL_FEATURES
+      From worker 4:	WARNING: redefining constant NULL_FEATURES
+      From worker 3:	WARNING: redefining constant NULL_FEATURES
+      From worker 5:	WARNING: redefining constant NULL_FEATURES
+      From worker 2:	WARNING: redefining constant NULL_FEATURES
+      From worker 3:	WARNING: redefining constant NULL_FEATURES
+      From worker 4:	WARNING: redefining constant NULL_FEATURES
+      From worker 5:	WARNING: redefining constant NULL_FEATURES
+      From worker 5:	WARNING: redefining constant NULL_FEATURES
+      From worker 2:	WARNING: redefining constant NULL_FEATURES
+      From worker 5:	WARNING: redefining constant NULL_FEATURES
+      From worker 4:	WARNING: redefining constant NULL_FEATURES
+      From worker 3:	WARNING: redefining constant NULL_FEATURES
+>> 0.07294203158279668
+>> 0.4606261031690759
+>> 0.1302641981708513
+>> 0.5527735041347007
+>> 0.0
+>> 0.536480693078215
+>> 0.0
+>> 0.0
+>> 0.2299422571342157
+>> 0.27516565834091217
+>> 0.608652595555726
+>> 0.437252797079949
+>> 0.0
+>> 0.0
+>> 0.00013091771504183364
+>> 0.02737598162914546
+>> 0.5517539339134263
+>> 0.4400088466266567
+>> 0.503587718746222
+>> 0.1713458074098552
+>> 0.0
+>> 0.38369778570689744
+>> 0.4183065484306826
+>> 0.045791334621258846
+>> 0.16235378881017543
+>> 0.09375334628543648
+>> 0.018866383134351405
+>> 0.005669107445196513
+>> 0.6486200906731702
+>> 0.04823767539673044
+>> 0.5114256139577817
+>> 0.6167842470341971
+>> 0.0
+>> 0.0
+>> 0.4606168697815958
+>> 0.16622183309923305
+>> 0.43149305064303867
+>> 0.6374116517527872
+>> 0.628487681242967
+>> 0.0
+>> 0.39598633180869297
+>> 0.4611580173042252
+>> 0.0
+>> 0.0
+>> 0.6510484801742966
+>> 0.628652363550128
+>> 0.020294452429880285
+>> 0.24099882857030203
+>> 0.19600913667620387
+>> 0.49686010511411205
+>> 0.6561507544707489
+>> 0.6451443369201739
+>> 0.643772924784497
+>> 0.6456197097201799
+>> 0.6440808858104909
+>> 0.6519016987317899
+>> 0.6400548128755055
+>> 0.6492187115073338
+>> 0.6001153352838084
+>> 0.630694276506172
+>> 0.6680651232171482
+>> 0.6448763589318796
+>> 0.63671819116268
+>> 0.6360644806649393
+>> 0.5628838712960704
+>> 0.6503187207516903
+>> 0.6646056887238724
+>> 0.6363137076729115
+>> 0.6492392440647038
+>> 0.6117855682015496
+>> 0.6377406067459239
+>> 0.6493098118635475
+>> 0.6036697244605789
+>> 0.6517454468822433
+>> 0.625750266540628
+>> 0.6697018820175104
+>> 0.6524273163541805
+>> 0.6375674004098157
+>> 0.6484097167818595
+>> 0.5884469205541158
+>> 0.6443473642023401
+>> 0.635791841286169
+>> 0.5801085166848978
+>> 0.6736882361486726
+>> 0.6785358669645655
+>> 0.6352907276781392
+>> 0.6520341140071583
+>> 0.550064967316456
+>> 0.6360611415684873
+>> 0.6683860149730672
+>> 0.6203885864382473
+>> 0.6601453286983622
+>> 0.660955565556909
+>> 0.6526274153126458
+>> 0.6373319109805313
+>> 0.6676257460689092
+>> 0.6520573544473658
+>> 0.6677944925445206
+>> 0.6371217014565761
+>> 0.6147791721701389
+>> 0.6516419906998979
+>> 0.6652200993623159
+>> 0.6351910009015643
+>> 0.6435766676886997
+>> 0.6649991751047968
+>> 0.6511480331669882
+>> 0.6329018287675858
+>> 0.6622792111954181
+>> 0.6461216026374311
+>> 0.6598239472147102
+>> 0.6382012051658503
+>> 0.6467457947965572
+>> 0.6171733053130687
+>> 0.657333978873337
+>> 0.6543875406895658
+>> 0.6497198975866875
+>> 0.6538893986852929
+>> 0.6395183799092301
+>> 0.6297451099576663
+>> 0.661727279144925
+>> 0.639456314565336
+>> 0.648220195673998
+>> 0.6461916104606454
+>> 0.6200928798752336
+>> 0.6493950465692077
+>> 0.6517226477081226
+>> 0.5831919408578117
+>> 0.647449176994533
+>> 0.5045788402794725
+>> 0.6598219426985613
+>> 0.6479608766353847
+>> 0.6450706825505699
+>> 0.6723398100522139
+>> 0.6436650504617469
+>> 0.654811298713797
+>> 0.6623790900121053
+>> 0.6641853717618998
+>> 0.6594805415348441
+>> 0.6660318002980133
+>> 0.58687879698149
+>> 0.6370079321897001
+>> 0.6210110307630873
+>> 0.6388432186439894
+>> 0.6576531262821542
+>> 0.6435669952888231
+>> 0.6619338433424204
+>> 0.6553677273600981
+>> 0.6327260883978962
+>> 0.65566989363541
+>> 0.6878935381166261
+>> 0.6354164049942619
+>> 0.28478927862120273
+>> 0.6292053644260237
+>> 0.5835671712597211
+>> 0.6519410905871034
+>> 0.6520316218121923
+>> 0.6747958102408084
+>> 0.6490934993267028
+>> 0.6476781584970327
+>> 0.657584441754233
+>> 0.6515686021806751
+>> 0.6375351872220677
+>> 0.6639063809358926
+>> 0.6654310140531912
+>> 0.5901852440914294
+>> 0.6542536726394633
+>> 0.6527167557937112
+>> 0.6490655791866801
+>> 0.6744688018898735
+>> 0.6514936580698955
+>> 0.6291817575516968
+>> 0.641979310922559
+>> 0.6568190969345562
+>> 0.6760223088831009
+>> 0.6556833119186505
+>> 0.6500472694749933
+>> 0.6705904820949607
+>> 0.6494367573258963
+>> 0.6437880754951946
+>> 0.6240308765489357
+>> 0.6295431823468127
+>> 0.6467315165899358
+>> 0.6519542007459875
+>> 0.6529298864710756
+>> 0.6519124600171519
+>> 0.65759239141486
+>> 0.6362868304402153
+>> 0.6738616296972519
+>> 0.6729613054668834
+>> 0.6493067388579318
+>> 0.6435168417578703
+>> 0.6700597229426559
+>> 0.6490191732906854
+>> 0.6542327625566172
+>> 0.6063676732696788
+>> 0.6446747673394887
+>> 0.6534225374602571
+>> 0.6393443336669086
+>> 0.6411590411972672
+>> 0.6578888258941843
+>> 0.63824280368783
+>> 0.6727950778385906
+>> 0.6650331331615933
+>> 0.6529562124149328
+>> 0.6620303819178823
+>> 0.6439054930032697
+>> 0.6831282930051226
+>> 0.6689704908771317
+>> 0.6462310243319374
+>> 0.6446122869013862
+1760.123240 seconds (12.31 M allocations: 905.055 MiB, 0.02% gc time)
+THETA: [0.0, 0.247712, 0.658087, 0.0942012]

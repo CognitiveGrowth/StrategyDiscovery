@@ -1,0 +1,148 @@
+┌ Warning: Module VersionParsing with build ID 6173344076005696 is missing from the cache.
+│ This may mean VersionParsing [81def892-9a0e-5fdd-b105-ffc91e053289] does not support precompilation but is imported by a module that does.
+└ @ Base loading.jl:941
+      From worker 4:	┌ Warning: Module VersionParsing with build ID 6173341677204309 is missing from the cache.
+      From worker 4:	│ This may mean VersionParsing [81def892-9a0e-5fdd-b105-ffc91e053289] does not support precompilation but is imported by a module that does.
+      From worker 4:	└ @ Base loading.jl:941
+      From worker 2:	┌ Warning: Module VersionParsing with build ID 9782366641227793 is missing from the cache.
+      From worker 2:	│ This may mean VersionParsing [81def892-9a0e-5fdd-b105-ffc91e053289] does not support precompilation but is imported by a module that does.
+      From worker 2:	└ @ Base loading.jl:941
+      From worker 5:	┌ Warning: Module VersionParsing with build ID 9893726299035210 is missing from the cache.
+      From worker 5:	│ This may mean VersionParsing [81def892-9a0e-5fdd-b105-ffc91e053289] does not support precompilation but is imported by a module that does.
+      From worker 5:	└ @ Base loading.jl:941
+      From worker 3:	┌ Warning: Module VersionParsing with build ID 9883179963091712 is missing from the cache.
+      From worker 3:	│ This may mean VersionParsing [81def892-9a0e-5fdd-b105-ffc91e053289] does not support precompilation but is imported by a module that does.
+      From worker 3:	└ @ Base loading.jl:941
+Params
+  n_gamble: Int64 7
+  n_attr: Int64 4
+  reward_dist: Normal{Float64}
+  compensatory: Bool false
+  cost: Float64 0.01
+
+reward = 0.146   seconds = 6.292
+reward = 0.136   seconds = 2.987
+reward = 0.130   seconds = 0.501
+reward = 0.130   seconds = 0.478
+reward = 0.144   seconds = 1.725
+reward = 0.135   seconds = 2.314
+reward = 0.130   seconds = 0.478
+reward = 0.130   seconds = 0.482
+reward = 0.130   seconds = 0.469
+reward = 0.142   seconds = 1.484
+reward = 0.130   seconds = 0.491
+reward = 0.135   seconds = 0.709
+reward = 0.135   seconds = 2.014
+reward = 0.130   seconds = 0.531
+reward = 0.130   seconds = 0.563
+reward = 0.132   seconds = 3.014
+reward = 0.136   seconds = 2.689
+reward = 0.130   seconds = 0.532
+reward = 0.130   seconds = 0.543
+reward = 0.130   seconds = 0.520
+reward = 0.136   seconds = 2.898
+reward = 0.133   seconds = 0.602
+reward = 0.132   seconds = 0.676
+reward = 0.130   seconds = 0.787
+reward = 0.140   seconds = 2.438
+reward = 0.132   seconds = 3.316
+reward = 0.158   seconds = 1.478
+reward = 0.158   seconds = 1.516
+reward = 0.105   seconds = 4.011
+reward = 0.141   seconds = 2.761
+reward = 0.159   seconds = 1.412
+reward = 0.159   seconds = 1.552
+reward = 0.129   seconds = 0.669
+reward = 0.160   seconds = 1.358
+reward = 0.159   seconds = 1.448
+reward = 0.130   seconds = 0.524
+reward = 0.160   seconds = 1.465
+reward = 0.130   seconds = 0.516
+reward = 0.154   seconds = 1.083
+reward = 0.136   seconds = 2.515
+reward = 0.157   seconds = 1.401
+reward = 0.130   seconds = 0.570
+reward = 0.145   seconds = 2.149
+reward = 0.130   seconds = 0.537
+reward = 0.139   seconds = 2.926
+reward = 0.154   seconds = 1.163
+reward = 0.157   seconds = 1.495
+reward = 0.157   seconds = 1.319
+reward = 0.158   seconds = 1.484
+reward = 0.159   seconds = 1.527
+reward = 0.161   seconds = 1.486
+reward = 0.137   seconds = 3.131
+reward = 0.139   seconds = 3.286
+reward = 0.160   seconds = 1.442
+reward = 0.159   seconds = 1.514
+reward = 0.130   seconds = 0.510
+reward = 0.158   seconds = 1.460
+reward = 0.158   seconds = 1.434
+reward = 0.130   seconds = 0.507
+reward = 0.161   seconds = 1.446
+reward = 0.157   seconds = 1.468
+reward = 0.159   seconds = 1.497
+reward = 0.160   seconds = 1.556
+reward = 0.130   seconds = 0.704
+reward = 0.160   seconds = 2.490
+reward = 0.130   seconds = 0.529
+reward = 0.134   seconds = 3.161
+reward = 0.156   seconds = 1.476
+reward = 0.160   seconds = 1.442
+reward = 0.156   seconds = 1.475
+reward = 0.135   seconds = 2.305
+reward = 0.161   seconds = 1.466
+reward = 0.140   seconds = 2.621
+reward = 0.158   seconds = 1.675
+reward = 0.134   seconds = 3.255
+reward = 0.130   seconds = 0.568
+reward = 0.138   seconds = 2.872
+reward = 0.158   seconds = 1.649
+reward = 0.155   seconds = 2.525
+reward = 0.158   seconds = 2.244
+reward = 0.158   seconds = 2.245
+reward = 0.160   seconds = 2.163
+reward = 0.130   seconds = 0.565
+reward = 0.131   seconds = 3.635
+reward = 0.133   seconds = 2.470
+reward = 0.159   seconds = 2.308
+reward = 0.159   seconds = 1.624
+reward = 0.157   seconds = 1.465
+reward = 0.159   seconds = 1.423
+reward = 0.130   seconds = 0.515
+reward = 0.130   seconds = 0.513
+reward = 0.136   seconds = 1.151
+reward = 0.156   seconds = 1.240
+reward = 0.158   seconds = 1.429
+reward = 0.156   seconds = 1.290
+reward = 0.130   seconds = 0.772
+reward = 0.159   seconds = 1.404
+reward = 0.130   seconds = 0.531
+reward = 0.134   seconds = 1.766
+reward = 0.130   seconds = 0.662
+reward = 0.159   seconds = 1.425
+reward = 0.157   seconds = 1.375
+reward = 0.160   seconds = 1.372
+reward = 0.159   seconds = 1.403
+reward = 0.162   seconds = 1.408
+┌ Warning: The call to compilecache failed to create a usable precompiled cache file for PyCall [438e738f-606a-5dbb-bf0a-cddfbfd45ab0]
+│   exception = Required dependency VersionParsing [81def892-9a0e-5fdd-b105-ffc91e053289] failed to load from a cache file.
+└ @ Base loading.jl:963
+┌ Warning: The call to compilecache failed to create a usable precompiled cache file for PyCall [438e738f-606a-5dbb-bf0a-cddfbfd45ab0]
+│   exception = Required dependency VersionParsing [81def892-9a0e-5fdd-b105-ffc91e053289] failed to load from a cache file.
+└ @ Base loading.jl:963
+┌ Warning: The call to compilecache failed to create a usable precompiled cache file for PyCall [438e738f-606a-5dbb-bf0a-cddfbfd45ab0]
+│   exception = Required dependency VersionParsing [81def892-9a0e-5fdd-b105-ffc91e053289] failed to load from a cache file.
+└ @ Base loading.jl:963
+┌ Warning: The call to compilecache failed to create a usable precompiled cache file for Conda [8f4d0f93-b110-5947-807f-2305c1781a2d]
+│   exception = ArgumentError: Invalid header in cache file /usr/people/flc2/.julia/compiled/v1.0/Conda/WZE3U.ji.
+└ @ Base loading.jl:963
+┌ Warning: The call to compilecache failed to create a usable precompiled cache file for PyCall [438e738f-606a-5dbb-bf0a-cddfbfd45ab0]
+│   exception = Required dependency VersionParsing [81def892-9a0e-5fdd-b105-ffc91e053289] failed to load from a cache file.
+└ @ Base loading.jl:963
+┌ Warning: The call to compilecache failed to create a usable precompiled cache file for PyCall [438e738f-606a-5dbb-bf0a-cddfbfd45ab0]
+│   exception = Required dependency VersionParsing [81def892-9a0e-5fdd-b105-ffc91e053289] failed to load from a cache file.
+└ @ Base loading.jl:963
+227.384432 seconds (11.02 M allocations: 710.749 MiB, 0.17% gc time)
+THETA: [0.0, 1.0, 0.0, 0.0]
+Wrote runs/onecost/results/opt-1-7-4-0.13-0.072-false-0.01.jld
