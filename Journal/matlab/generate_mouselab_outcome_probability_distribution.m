@@ -1,4 +1,4 @@
-function probabilities = generate_mouselabe_outcome_probability_distribution(isHighCompensatory)
+function probabilities = generate_mouselab_outcome_probability_distribution(isHighCompensatory)
 
 % this function will generate outcome probabilities for a single trial 
 % using the same procedure used in the actual experiment

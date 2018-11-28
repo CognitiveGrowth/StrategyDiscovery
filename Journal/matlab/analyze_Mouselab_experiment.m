@@ -316,16 +316,16 @@ for c=1:4
     
     
     
-%     table(1,1+c) = sum(data.consistent_with_TTB(conditions(:,c)));
-%     table(2,1+c) = sum(data.consistent_with_SAT_TTB(conditions(:,c)));
-%     table(3,1+c) = sum(data.consistent_with_random(conditions(:,c)));
-%     table(4,1+c) = -1;
-%     table(5,1+c) = sum(data.consistent_with_WADD(conditions(:,c)));
-%     table(6,1+c) = sum(data.consistent_with_SAT(conditions(:,c)));
+    table(1,1+c) = sum(data.consistent_with_TTB(conditions(:,c)));
+    table(2,1+c) = sum(data.consistent_with_SAT_TTB(conditions(:,c)));
+    table(3,1+c) = sum(data.consistent_with_random(conditions(:,c)));
+    table(4,1+c) = -1;
+    table(5,1+c) = sum(data.consistent_with_WADD(conditions(:,c)));
+    table(6,1+c) = sum(data.consistent_with_SAT(conditions(:,c)));
 end
-% for s=1:6
-%     table(s,1)=sum(table(s,2:end));
-% end
+for s=1:6
+    table(s,1)=sum(table(s,2:end));
+end
 table
 
 rel_freq = zeros(size(table))
@@ -576,3 +576,27 @@ disp(['In the high-dispersion environment increasing the stakes significantly in
     '% and we can be 97.5% confident the relative frequency of TTB increased by at least ',...
     int2str(round(100*CI_delta_ratio(1),2)),'%.'])
 
+%%
+freq_chosen_gamble_is_max_EV = [];
+freq_chosen_gamble_is_max_EV_hdhs = [];
+freq_chosen_gamble_is_max_EV_hdls = [];
+freq_chosen_gamble_is_max_EV_ldhs = [];
+freq_chosen_gamble_is_max_EV_ldls = [];
+for s = 1:size(data.EVs,1)
+    if data.condition(s) == 2
+        for b = 1:size(data.EVs,2)
+            for t = 1:size(data.EVs,3)
+                freq_chosen_gamble_is_max_EV = [freq_chosen_gamble_is_max_EV,(data.EV_chosen_gamble(s,b,t) == max(squeeze(data.EVs(s,b,t,:))))];
+                if data.high_stakes(s,b) == 1 && data.high_dispersion(s,b,t) == 1
+                    freq_chosen_gamble_is_max_EV_hdhs = [freq_chosen_gamble_is_max_EV_hdhs,(data.EV_chosen_gamble(s,b,t) == max(squeeze(data.EVs(s,b,t,:))))];
+                elseif data.high_stakes(s,b) == 0 && data.high_dispersion(s,b,t) == 1
+                    freq_chosen_gamble_is_max_EV_hdls = [freq_chosen_gamble_is_max_EV_hdls,(data.EV_chosen_gamble(s,b,t) == max(squeeze(data.EVs(s,b,t,:))))];
+                elseif data.high_stakes(s,b) == 1 && data.high_dispersion(s,b,t) == 0
+                    freq_chosen_gamble_is_max_EV_ldhs = [freq_chosen_gamble_is_max_EV_ldhs,(data.EV_chosen_gamble(s,b,t) == max(squeeze(data.EVs(s,b,t,:))))];
+                elseif data.high_stakes(s,b) == 0 && data.high_dispersion(s,b,t) == 0
+                    freq_chosen_gamble_is_max_EV_ldls = [freq_chosen_gamble_is_max_EV_ldls,(data.EV_chosen_gamble(s,b,t) == max(squeeze(data.EVs(s,b,t,:))))];
+                end
+            end
+        end
+    end
+end
