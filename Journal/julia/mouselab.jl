@@ -5,12 +5,13 @@ import Base
 const TERM = 0  # termination action
 # const NULL_FEATURES = -1e10 * ones(4)  # features for illegal computation
 const N_SAMPLE = 10000
+const N_FEATURE = 5
 # =================== Problem =================== #
 
 "Parameters defining a class of mouselab problems."
 @with_kw struct Params
     n_gamble::Int = 7
-    n_attr::Int = 4
+    n_outcome::Int = 4
     reward_dist::Normal = Normal(0, 1)
     compensatory::Bool = true
     cost::Float64 = 0.01
@@ -19,7 +20,7 @@ end
 
 function weights(prm::Params)
     function sample_p()
-        x = [0; rand(prm.n_attr - 1); 1]
+        x = [0; rand(prm.n_outcome - 1); 1]
         sort!(x)
         p = diff(x)
     end
@@ -35,7 +36,6 @@ exp_dist(min, max) = begin
     Normal(
         (max + min) / 2,
         0.3 * (max - min),
-        # min, max
     )
 end
 exp_dist(stakes::String) = begin
@@ -52,13 +52,13 @@ struct Problem
     weights::Vector{Float64}
 end
 Problem(prm::Params) = begin
-    @unpack reward_dist, n_attr, n_gamble = prm
-    rs = rand(reward_dist, n_attr * n_gamble)
+    @unpack reward_dist, n_outcome, n_gamble = prm
+    rs = rand(reward_dist, n_outcome * n_gamble)
     Problem(
         prm,
-        reshape(rs, n_attr, n_gamble),
+        reshape(rs, n_outcome, n_gamble),
         weights(prm)
-        # rand(Dirichlet(dispersion * ones(n_attr
+        # rand(Dirichlet(dispersion * ones(n_outcome
     )
 end
 computations(p::Problem) = 0:prod(size(p.matrix))
@@ -74,7 +74,7 @@ end
 "Initial belief for a given problem."
 Belief(p::Problem) = begin
     Belief(
-        [p.prm.reward_dist for i in 1:p.prm.n_attr, j in 1:p.prm.n_gamble],
+        [p.prm.reward_dist for i in 1:p.prm.n_outcome, j in 1:p.prm.n_gamble],
         p.weights,
         p.prm.cost
     )
@@ -118,6 +118,7 @@ function gamble_values(b::Belief)::Vector{Normal{Float64}}
     sum(b.weights .* b.matrix, dims=1)[:]
 end
 
+get_index(b::Belief, c::Int) = Tuple(CartesianIndices(size(b.matrix))[c])
 
 # =================== Features =================== #
 
@@ -163,19 +164,36 @@ function voi_gamble(b::Belief, gamble::Int, gamble_dists, μ)
     emax(gamble_dists[gamble], cv) - maximum(μ)
 end
 
+"Value of knowing the values of all cells for an outcome."
+function voi_outcome(b::Belief, cell::Int)
+    gamble_dists = gamble_values(b)
+    μ = mean.(gamble_dists)
+    return voi_outcome(b, cell, μ)
+end
+function voi_outcome(b::Belief, outcome::Int, μ::Vector{Float64})
+    # outcome = 1
+    n_outcome, n_gamble = size(b.matrix)
+    w = b.weights[outcome]
+    gamble_dists = [Normal(μ[i], b.matrix[outcome, i].σ * w) for i in 1:n_gamble]
+    samples = (rand(d, N_SAMPLE) for d in gamble_dists)
+    mean(max.(samples...)) - maximum(μ)
+end
+
+
 "Value of knowing the value in a cell."
 function voi1(b::Belief, cell::Int)
     gamble_dists = gamble_values(b)
     μ = mean.(gamble_dists)
     return voi1(b, cell, μ)
 end
+
 function voi1(b::Belief, cell::Int, μ::Vector{Float64})::Float64
-    n_attr, n_gamble = size(b.matrix)
-    attr, gamble = Tuple(CartesianIndices(size(b.matrix))[cell])
+    n_outcome, n_gamble = size(b.matrix)
+    outcome, gamble = Tuple(CartesianIndices(size(b.matrix))[cell])
     new_dist = Normal(0, 1e-20)
-    for i in 1:n_attr
+    for i in 1:n_outcome
         d = b.matrix[i, gamble]
-        new_dist += b.weights[i] * (i == attr ? d : d.μ)
+        new_dist += b.weights[i] * (i == outcome ? d : d.μ)
     end
     cv = competing_value(µ, gamble)
     emax(new_dist, cv) - maximum(μ)
@@ -196,17 +214,27 @@ end
 
 "Features for every computation in a given belief."
 function features(b::Belief)
-    n_attr, n_gamble = size(b.matrix)
+    n_outcome, n_gamble = size(b.matrix)
     gamble_dists = gamble_values(b)
     μ = mean.(gamble_dists)
     vpi_b = vpi(b, gamble_dists, μ)
     voi_gambles = [voi_gamble(b, g, gamble_dists, μ) for g in 1:n_gamble]
-    phi(cell) = observed(b, cell) ? -1e10 * ones(4) : [
-        -1,
-        voi1(b, cell, μ),
-        voi_gambles[Int(ceil(cell / n_attr))],
-        vpi_b
-    ]
+    voi_outcomes = [voi_outcome(b, o) for o in 1:n_outcome]
+
+    function phi(cell)
+        if observed(b, cell)
+            return -1e10 * ones(5)
+        end
+        outcome, gamble = get_index(b, cell)
+        return [
+            -1,
+            voi1(b, cell, μ),
+            voi_gambles[gamble],
+            voi_outcomes[outcome],
+            vpi_b
+        ]
+    end
+
     phis = [phi(a) for a in eachindex(b.matrix)]
     hcat(phis...)
 end
@@ -227,19 +255,15 @@ end
 end
 
 "Runs a Policy on a Problem."
-function rollout(p::Problem, π::Policy; initial_belief=nothing, max_steps=100, callback=nothing)
+function rollout(π::Policy, p::Problem; initial_belief=nothing, max_steps=100, callback=((b, c) -> nothing))
     b = initial_belief != nothing ? initial_belief : Belief(p)
     reward = 0
-    computations = []
     for step in 1:max_steps
-        if belief_log != nothing
-            push!(belief_log, deepcopy(b))
-        end
         c = (step == max_steps) ? TERM : π(b)
-        push!(computations, c)
+        callback(b, c)
         if c == TERM
             reward += term_reward(b)
-            return (belief=b, reward=reward, n_steps=step, computations=computations)
+            return (belief=b, reward=reward, n_steps=step)
         else
             reward -= p.prm.cost
             observe!(b, p, c)

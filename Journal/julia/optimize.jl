@@ -21,7 +21,7 @@ end
 function max_cost(prm::Params)
     p = Problem(prm)
     b = Belief(p)
-    θ = Float64[1, 0, 0, 1]
+    θ = Float64[1, 0, 0, 0, 1]
     computes() = Policy(θ)(b) != TERM
 
     while computes()
@@ -45,7 +45,7 @@ end
 function avg_reward(prm, θ; n_roll=100)
     reward = @distributed (+) for i in 1:n_roll
         π = Policy(θ)
-        rollout(Problem(prm), π, max_steps=200).reward
+        rollout(π, Problem(prm), max_steps=200).reward
     end
     reward / n_roll
 end
@@ -57,7 +57,7 @@ function optimize(prm::Params; seed=0, n_iter=100, n_roll=1000, verbose=false)
         flush(stdout)
         - reward
     end
-    bounds = [ (0., max_cost(prm)), (0., 1.), (0., 1.) ]
+    bounds = [ (0., max_cost(prm)), (0., 1.), (0., 1.), (0., 1.)]
     opt = skopt.Optimizer(bounds, random_state=seed)
 
     # Choose initial samples by Latin Hypersquare sampling.
@@ -85,7 +85,7 @@ end
 function name(prm::Params)
     join(map(string, (
         prm.n_gamble,
-        prm.n_attr,
+        prm.n_outcome,
         prm.reward_dist.μ,
         prm.reward_dist.σ,
         prm.compensatory,
@@ -98,6 +98,7 @@ read_args(file) = Dict(Symbol(k)=>v for (k, v) in JSON.parsefile(file))
 
 function main(prm; jobname="none", seed=0, opt_args...)
     println(prm)
+    println("Running with $(length(workers())) workers.")
     target = "runs/$(jobname)/results"
     mkpath(target)
     Random.seed!(seed)
@@ -121,12 +122,11 @@ function main(file::String; opt_args...)
     main(prm; jobname=jobname, seed=seed, verbose=true, opt_args...)
 end
 
-
-# main("runs/test/jobs/1.json"; n_roll=10, n_iter=4)
-
-
-
-# include("mouselab.jl")
-# π = Policy([0, 0.3, 0.3, 0.4])
-# @time b, r, s = rollout(Problem(prm), π, max_steps=50); nothing
-# X = features(p, b)
+if !isempty(ARGS)
+    if ARGS[1] == "test"
+        main("runs/test/jobs/1.json"; n_iter=4, n_roll=4)
+    else
+        job_group, job_id = ARGS
+        main("runs/$job_group/jobs/$job_id.json")
+    end
+end
