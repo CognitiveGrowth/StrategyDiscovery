@@ -38,13 +38,13 @@ var nr_gambles = Math.floor(Math.random() * (range_nr_gambles[1]+1 - range_nr_ga
 for (o=0;o<nr_trials;o++){        
     RTs[o]=fillArray(-1,nr_outcomes*nr_gambles);
 }
-usePrecomputedGames = 1; // **CAUTION: if set to 1, this is only setup for 4x7 games, 100 unique trials, etc.; know what you're doing!
+usePrecomputedGames = 1; // **CAUTION: if set to 1, this is only setup for 10 games, 4x7 grid, 100 unique trials, etc.; know what you're doing!
+var trial_idx = new Array();
 if (usePrecomputedGames==1){
     trials_1_25 = shuffle(trials_1_25);
     trials_26_50 = shuffle(trials_26_50);
     trials_51_75 = shuffle(trials_51_75);
     trials_76_100 = shuffle(trials_76_100);
-    var trial_idx = new Array();
     if (payoff_range1[1] < payoff_range2[1]){
         for (i=0;i<10;i++){
             if (isHighCompensatory[0][i]==1){
@@ -789,6 +789,7 @@ function saveAnswers(){
         RTs: RTs,
         instructionQuizTime: quizTime,
         experimentTime: experimentTime,
+        trial_idx: trial_idx,
         basic_info: basic_info/////
     }
                 

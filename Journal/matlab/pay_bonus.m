@@ -2,7 +2,7 @@
 %addpath('~/Dropbox/PhD/MatlabTools/parse_json/')
 %filename_metadata = '~/Dropbox/mouselab_cogsci17/data/mouselab_cogsci17_metadata.csv';
 
-datdir = '3conditions_300subjects';
+datdir = 'fullyRevealed_100uniqueTrials';
 load(['../data/',datdir,'/Mouselab_data_Experiment.mat']);
 
 for s = 1:length(data_by_sub)

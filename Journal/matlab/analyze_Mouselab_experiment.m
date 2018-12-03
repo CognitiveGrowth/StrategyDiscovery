@@ -3,8 +3,9 @@ addpath('~/Dropbox/PhD/MatlabTools/')
 addpath('~/Dropbox/PhD/MatlabTools/parse_json/')
 clear
 
-load(['../data/3conditions_300subjects/Mouselab_data_Experiment.mat'])
-% load(['../data/03242018/Mouselab_data_Experiment2.mat'])
+load(['../data/fullyRevealed_100uniqueTrials/Mouselab_data_Experiment.mat'])
+% load(['../data/3conditions_300subjects/Mouselab_data_Experiment_condition2.mat'])
+% load(['../data/03242018/Mouselab_data_Experiment2.mat']) 3conditions_300subjects
 
 % experiment_nr = 2;
 % try
@@ -26,6 +27,7 @@ for s=1:numel(data_by_sub)
     end
     data.bonus_(s) = str2num(data.bonus{s});
 end
+
 
 avg_completion_time = mean([data.experimentTime{:}])/60
 for s=1:numel(data_by_sub)
@@ -186,6 +188,10 @@ for sub=1:numel(data_by_sub)
 %             data.consistent_with_TTBplus(sub,b,t) = nr_acquisitions>=(nr_gambles+nr_outcomes-1) &&...
 %                 all(outcome(1:nr_gambles)==most_probable) &&...
 %                 sum(gamble(nr_gambles+1:end)==gamble_of_most_valueable_of_most_probable_outcome)==(nr_outcomes-1);
+
+            data.EV_chosen_gamble_equals_maxEV(sub,b,t) = (data.EV_chosen_gamble(sub,b,t) == max(squeeze(data.EVs(sub,b,t,:))));
+            data.EVbest_minus_EVchosen_over_EVbest(sub,b,t) = (data.EV_chosen_gamble(sub,b,t)-max(squeeze(data.EVs(sub,b,t,:))))/max(squeeze(data.EVs(sub,b,t,:)));
+            data.EV_chosen_rank(sub,b,t) = find(sort(squeeze(data.EVs(sub,b,t,:)),'descend')==data.EV_chosen_gamble(sub,b,t),1);
             
         end
         
@@ -577,26 +583,40 @@ disp(['In the high-dispersion environment increasing the stakes significantly in
     int2str(round(100*CI_delta_ratio(1),2)),'%.'])
 
 %%
-freq_chosen_gamble_is_max_EV = [];
-freq_chosen_gamble_is_max_EV_hdhs = [];
-freq_chosen_gamble_is_max_EV_hdls = [];
-freq_chosen_gamble_is_max_EV_ldhs = [];
-freq_chosen_gamble_is_max_EV_ldls = [];
-for s = 1:size(data.EVs,1)
-    if data.condition(s) == 2
-        for b = 1:size(data.EVs,2)
-            for t = 1:size(data.EVs,3)
-                freq_chosen_gamble_is_max_EV = [freq_chosen_gamble_is_max_EV,(data.EV_chosen_gamble(s,b,t) == max(squeeze(data.EVs(s,b,t,:))))];
-                if data.high_stakes(s,b) == 1 && data.high_dispersion(s,b,t) == 1
-                    freq_chosen_gamble_is_max_EV_hdhs = [freq_chosen_gamble_is_max_EV_hdhs,(data.EV_chosen_gamble(s,b,t) == max(squeeze(data.EVs(s,b,t,:))))];
-                elseif data.high_stakes(s,b) == 0 && data.high_dispersion(s,b,t) == 1
-                    freq_chosen_gamble_is_max_EV_hdls = [freq_chosen_gamble_is_max_EV_hdls,(data.EV_chosen_gamble(s,b,t) == max(squeeze(data.EVs(s,b,t,:))))];
-                elseif data.high_stakes(s,b) == 1 && data.high_dispersion(s,b,t) == 0
-                    freq_chosen_gamble_is_max_EV_ldhs = [freq_chosen_gamble_is_max_EV_ldhs,(data.EV_chosen_gamble(s,b,t) == max(squeeze(data.EVs(s,b,t,:))))];
-                elseif data.high_stakes(s,b) == 0 && data.high_dispersion(s,b,t) == 0
-                    freq_chosen_gamble_is_max_EV_ldls = [freq_chosen_gamble_is_max_EV_ldls,(data.EV_chosen_gamble(s,b,t) == max(squeeze(data.EVs(s,b,t,:))))];
-                end
-            end
-        end
-    end
-end
+mean(data.EV_chosen_gamble_equals_maxEV(:))
+mean(data.EV_chosen_gamble_equals_maxEV(has_high_dispersion(:)&has_high_stakes(:)))
+mean(data.EV_chosen_gamble_equals_maxEV(has_high_dispersion(:)&has_low_stakes(:)))
+mean(data.EV_chosen_gamble_equals_maxEV(has_low_dispersion(:)&has_high_stakes(:)))
+mean(data.EV_chosen_gamble_equals_maxEV(has_low_dispersion(:)&has_low_stakes(:)))
+
+nr_trial_per_condition = numel(has_high_dispersion(:))/4;
+figure
+hist([data.EVbest_minus_EVchosen_over_EVbest(has_high_dispersion(:)&has_high_stakes(:)),...
+    data.EVbest_minus_EVchosen_over_EVbest(has_high_dispersion(:)&has_low_stakes(:)),...
+    data.EVbest_minus_EVchosen_over_EVbest(has_low_dispersion(:)&has_high_stakes(:)),...
+    data.EVbest_minus_EVchosen_over_EVbest(has_low_dispersion(:)&has_low_stakes(:))],10);
+% h=h./sum(h);
+% hist(h,10)
+legend({'high-dispersion, high-stakes','high-dispersion, low-stakes','low-dispersion, high-stakes','low-dispersion, low-stakes'},'location','northwest')
+xlabel('(EV(best gamble)-EV(chosen gamble))/EV(best gamble)','fontsize',18)
+ylabel('frequency','fontsize',18)
+title('Normalized deviation of EV of chosen gamble from best gamble','fontsize',16)
+set(gca,'ylim',[0 nr_trial_per_condition],'ytick',[0:nr_trial_per_condition/4:nr_trial_per_condition],'yticklabel',0:.25:1)
+
+figure
+hist([data.EV_chosen_rank(has_high_dispersion(:)&has_high_stakes(:)),...
+    data.EV_chosen_rank(has_high_dispersion(:)&has_low_stakes(:)),...
+    data.EV_chosen_rank(has_low_dispersion(:)&has_high_stakes(:)),...
+    data.EV_chosen_rank(has_low_dispersion(:)&has_low_stakes(:))],10);
+% h=h./sum(h);
+% hist(h,10)
+legend({'high-dispersion, high-stakes','high-dispersion, low-stakes','low-dispersion, high-stakes','low-dispersion, low-stakes'},'location','northeast')
+xlabel('rank','fontsize',18)
+ylabel('frequency','fontsize',18)
+title('Frequncy of chosing gamble with \{1^{st},2^{nd},...,7^{th}\} best EV','fontsize',16)
+set(gca,'ylim',[0 nr_trial_per_condition],'ytick',[0:nr_trial_per_condition/4:nr_trial_per_condition],'yticklabel',0:.25:1)
+
+% 
+% data.EV_chosen_gamble_equals_maxEV(sub,b,t)
+% data.EVbest_minus_EVchosen_over_EVbest(sub,b,t)
+% data.EV_chosen_rank(sub,b,t)
