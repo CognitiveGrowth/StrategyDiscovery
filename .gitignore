@@ -3,4 +3,5 @@ Journal/julia/run.sbatch
 Journal/julia/scratch.jl
 Journal/julia/test-regression.sbatch
 Journal/julia/test.sbatch
-*/.ipynb_checkpoints/
+.ipynb_checkpoints
+__pycache__
