@@ -1,7 +1,7 @@
 using Parameters
 using Distributions
 import Base
-
+using Printf: @printf
 const TERM = 0  # termination action
 # const NULL_FEATURES = -1e10 * ones(4)  # features for illegal computation
 const N_SAMPLE = 10000
@@ -79,12 +79,27 @@ Belief(p::Problem) = begin
         p.prm.cost
     )
 end
-Base.show(io::IO, mime::MIME"text/plain", b::Belief) = begin
-    X = map(b.matrix) do d
-        d.σ < 1e-10 ? round(d.μ; digits=2) : 0
+function show_belief(b::Belief, c=0)
+    ci, cj = c > 0 ? get_index(b, c) : (-1, -1)
+    n_row, n_col = size(b.matrix)
+    println("     __", "_" ^ (7 * n_col))
+    for i in 1:n_row
+        @printf "%2d %% ||" b.weights[i] * 100
+        for j in 1:n_col
+            d = b.matrix[i, j]
+            if i == ci && j == cj
+                print("  XX  |")
+            elseif d.σ > 1e-10
+                @printf " _%2d_ |" (j-1)*4 + i
+            else
+                @printf " %1.2f |" d.μ
+            end
+        end
+        println()
     end
-    show(io, mime, X)
+    # println("      --", "-" ^ (7 * n_col))
 end
+Base.show(io::IO, mime::MIME"text/plain", b::Belief) = show_belief(b)
 "Expected value of terminating computation with a given belief."
 term_reward(b::Belief) = maximum(b.weights' * mean.(b.matrix))
 
@@ -199,7 +214,6 @@ function voi1(b::Belief, cell::Int, μ::Vector{Float64})::Float64
     emax(new_dist, cv) - maximum(μ)
 end
 
-
 "Value of knowing everything."
 function vpi(b::Belief)
     gamble_dists = gamble_values(b)
@@ -213,13 +227,15 @@ function vpi(b::Belief, gamble_dists::Vector{Normal{Float64}}, μ::Vector{Float6
 end
 
 "Features for every computation in a given belief."
-function features(b::Belief)
+function features(b::Belief; skip=falses(4))
     n_outcome, n_gamble = size(b.matrix)
     gamble_dists = gamble_values(b)
     μ = mean.(gamble_dists)
-    vpi_b = vpi(b, gamble_dists, μ)
-    voi_gambles = [voi_gamble(b, g, gamble_dists, μ) for g in 1:n_gamble]
-    voi_outcomes = [voi_outcome(b, o) for o in 1:n_outcome]
+    voi_gambles = skip[2] ? zeros(n_gamble) :
+      [voi_gamble(b, g, gamble_dists, μ) for g in 1:n_gamble]
+    voi_outcomes = skip[3] ? zeros(n_outcome) :
+      [voi_outcome(b, o) for o in 1:n_outcome]
+    vpi_b = skip[4] ? 0. : vpi(b, gamble_dists, μ)
 
     function phi(cell)
         if observed(b, cell)
@@ -228,7 +244,7 @@ function features(b::Belief)
         outcome, gamble = get_index(b, cell)
         return [
             -1,
-            voi1(b, cell, μ),
+            skip[1] ? 0. : voi1(b, cell, μ),
             voi_gambles[gamble],
             voi_outcomes[outcome],
             vpi_b
@@ -247,9 +263,11 @@ end
 "Selects a computation to perform in a given belief.
     e.g. Policy(θ)(b) -> c
 "
+voc(π, b) = (π.θ' * features(b; skip=π.θ[2:end] .== 0.))' .- b.cost
 (π::Policy)(b::Belief) = begin
-    voc = (π.θ' * features(b))' .- b.cost .+ 1e-10 * rand(length(b.matrix))
-    v, c = findmax(voc)
+    # voc = (π.θ' * features(b; skip=π.θ[2:end] .== 0.))' .- b.cost
+    noise = 1e-10 * rand(length(b.matrix))
+    v, c = findmax(voc(π, b) .+ noise)
     @assert isfinite(v)
     v <= 0 ? TERM : c
 end

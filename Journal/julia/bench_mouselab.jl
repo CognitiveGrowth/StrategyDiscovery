@@ -1,3 +1,4 @@
+cd("StrategyDiscovery/Journal/julia")
 include("mouselab.jl")
 using Profile
 using Test
@@ -36,8 +37,32 @@ bench_voi_gamble()
 # @profiler bench_voi_gamble()
 
 #%%
-include("mouselab.jl")
+# include("mouselab.jl")
 println("=============== bench_vpi ===============")
+# const SAMPLES = randn(N_SAMPLE)
+
+# const S2 = randn(N_SAMPLE, length(    gamble_dists))
+# const S4 = randn(length(gamble_dists), N_SAMPLE)
+
+
+X = μ .+ σ .* S3
+maximum(X, dims=1)
+
+[i + j for i=1:5, j=1:5]
+function vpi(b::Belief, gamble_dists::Vector{Normal{Float64}}, μ::Vector{Float64})::Float64
+    # σ = std.(gamble_dists)
+    # μ .+ σ .* S4
+    # mean(maximum(X, dims=1))
+    # samples = [d.μ + d.σ * s for d in gamble_dists, s in SAMPLES]
+    # mean(maximum(samples, dims=1))
+    # samples = [d.μ + d.σ * s for s in SAMPLES, d in gamble_dists]
+    # mean(maximum(samples, dims=2))
+
+
+    # mean(maximum(ss) for ss in samples) - maximum(μ)
+    # mean(max.(samples...)) - maximum(μ)
+end
+
 function bench_vpi(;n=1000)
     for i in 1:n
         vpi(b, gamble_dists, μ)

@@ -2,7 +2,7 @@
 import itertools
 import os
 import click
-
+import numpy as np
 def dict_product(d):
     """All possible combinations of values in lists in `d`"""
     for k, v in d.items():
@@ -26,13 +26,22 @@ module load julia
 julia -p {cpus_per_task} -L optimize.jl -e "main(\\"runs/{job_name}/jobs/$SLURM_ARRAY_TASK_ID.json\\")"
 '''.strip()
 
-
 def params(quick):
     return dict_product({
         'compensatory': [False, True],
         'stakes': ['high', 'low'],
-        'seed': [1, 2, 3, 4]
+        'seed': [1],
+        'cost': list(0.01 * np.exp(np.arange(0, 3.1, 0.2))),
+        'voi_features': [
+            # [1, 4],
+            [1, 2, 4],
+            # [1, 3, 4],
+            # [1, 2, 3, 4],
+        ]
     })
+
+
+
 
 @click.command()
 @click.argument('job-name')

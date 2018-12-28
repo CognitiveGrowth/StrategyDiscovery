@@ -3,7 +3,7 @@ using JLD
 @everywhere include("mouselab.jl")
 import Random
 using Dates: now
-using Printf: @printf
+
 using PyCall
 using LatinHypercubeSampling: LHCoptim
 
@@ -12,9 +12,13 @@ using LatinHypercubeSampling: LHCoptim
 ask(opt)::Vector{Float64} = opt[:ask]()
 tell(opt, x::Vector{Float64}, fx::Float64) = opt[:tell](Tuple(x), fx)
 
-function x2θ(x)
+function x2θ(x, voi_features)
     cost_weight = x[1]
-    voi_weights = diff([0; sort(collect(x[2:end])); 1])
+    ws = diff([0; sort(collect(x[2:end])); 1])
+    voi_weights = zeros(4)
+    for (f, w) in zip(voi_features, ws)
+        voi_weights[f] = w
+    end
     [cost_weight; voi_weights]
 end
 
@@ -50,19 +54,19 @@ function avg_reward(prm, θ; n_roll=100)
     reward / n_roll
 end
 
-function optimize(prm::Params; seed=0, n_iter=100, n_roll=1000, verbose=false)
+function optimize(prm::Params; voi_features=1:4, seed=0, n_iter=200, n_roll=1000, verbose=false)
     function loss(x; nr=n_roll)
-        reward, secs = @timed avg_reward(prm, x2θ(x); n_roll=n_roll)
+        reward, secs = @timed avg_reward(prm, x2θ(x, voi_features); n_roll=n_roll)
         verbose && @printf "reward = %.3f   seconds = %.3f\n" reward secs
         flush(stdout)
         - reward
     end
-    bounds = [ (0., max_cost(prm)), (0., 1.), (0., 1.), (0., 1.)]
-    opt = skopt.Optimizer(bounds, random_state=seed)
-
-    # Choose initial samples by Latin Hypersquare sampling.
-    upper_bounds = [b[2] for b in bounds]
+    bounds = [(0., max_cost(prm)); repeat([(0., 1.)], length(voi_features)-1)]
     n_latin = max(2, cld(n_iter, 4))
+    opt = skopt.Optimizer(bounds, random_state=seed, n_initial_points=n_latin)
+
+    # Choose first 25% of points by Latin Hypersquare sampling.
+    upper_bounds = [b[2] for b in bounds]
     latin_points = LHCoptim(n_latin, length(bounds), 1000)[1]
     for i in 1:n_latin
         x = latin_points[i, :] ./ n_latin .* upper_bounds
@@ -76,10 +80,15 @@ function optimize(prm::Params; seed=0, n_iter=100, n_roll=1000, verbose=false)
     end
 
     # Cross validation.
-    best_x = opt[:Xi][sortperm(opt[:yi])][1:cld(n_iter, 20)]  # top 20%
-    fx, i = findmin(loss.(best_x; nr=n_roll*10))
-
-    return (theta=x2θ(best_x[i]), reward=-fx, X=opt[:Xi], y=opt[:yi])
+    top_x = opt[:Xi][sortperm(opt[:yi])][1:cld(n_iter, 5)]  # top 20%
+    top_θ = [x2θ(x, voi_features) for x in top_x]
+    top_loss = loss.(top_x; nr=n_roll*10)
+    perm = sortperm(top_loss)
+    top_θ = top_θ[perm]
+    top_loss = top_loss[perm]
+    return (theta=top_θ[1], reward=-top_loss[1],
+            top_theta=top_θ, top_reward=-top_loss,
+            voi_features=voi_features)
 end
 
 function name(prm::Params)
@@ -93,20 +102,29 @@ function name(prm::Params)
     )), "-")
 end
 
+
 import JSON
 read_args(file) = Dict(Symbol(k)=>v for (k, v) in JSON.parsefile(file))
 
-function main(prm; jobname="none", seed=0, opt_args...)
+
+
+function main(prm::Params; jobname="none", seed=nothing, opt_args...)
     println(prm)
+    if seed == nothing
+        seed = Int(rand(1:1e8))
+    end
+    println("Seed: ", seed)
     println("Running with $(length(workers())) workers.")
     target = "runs/$(jobname)/results"
     mkpath(target)
     Random.seed!(seed)
     @time result = optimize(prm; seed=seed, opt_args...)
     println("THETA: ", result.theta)
+    println("REWARD: ", result.reward)
     file = "$(target)/opt-$seed-$(name(prm)).jld"
     result = Dict(pairs(result))
     result[:prm] = prm
+    result[:time] = now()
     save(file, "opt_result", result)
     println("Wrote $file")
     result
@@ -114,12 +132,13 @@ end
 
 function main(file::String; opt_args...)
     args = read_args(file)
-    seed = pop!(args, :seed, 0)
+    seed = pop!(args, :seed, nothing)
     jobname = pop!(args, :job_name, "none")
     stakes = pop!(args, :stakes)
+    voi_features = pop!(args, :voi_features)
     args[:reward_dist] = exp_dist(stakes)
     prm = Params(;args...)
-    main(prm; jobname=jobname, seed=seed, verbose=true, opt_args...)
+    main(prm; jobname=jobname, seed=seed, verbose=true, voi_features=voi_features, opt_args...)
 end
 
 if !isempty(ARGS)
