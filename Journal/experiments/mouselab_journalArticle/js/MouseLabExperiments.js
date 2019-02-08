@@ -38,7 +38,51 @@ var nr_gambles = Math.floor(Math.random() * (range_nr_gambles[1]+1 - range_nr_ga
 for (o=0;o<nr_trials;o++){        
     RTs[o]=fillArray(-1,nr_outcomes*nr_gambles);
 }
-randCond = Math.random();
+usePrecomputedGames = 1; // **CAUTION: if set to 1, this is only setup for 10 games, 4x7 grid, 100 unique trials, etc.; know what you're doing!
+var trial_idx = new Array();
+if (usePrecomputedGames==1){
+    trials_1_25 = shuffle(trials_1_25);
+    trials_26_50 = shuffle(trials_26_50);
+    trials_51_75 = shuffle(trials_51_75);
+    trials_76_100 = shuffle(trials_76_100);
+    if (payoff_range1[1] < payoff_range2[1]){
+        for (i=0;i<10;i++){
+            if (isHighCompensatory[0][i]==1){
+                trial_idx.push(trials_1_25[i])
+            }
+            else{
+                trial_idx.push(trials_26_50[i])
+            }
+        }
+        for (i=0;i<10;i++){
+            if (isHighCompensatory[1][i]==1){
+                trial_idx.push(trials_51_75[i])
+            }
+            else{
+                trial_idx.push(trials_76_100[i])
+            }
+        }
+    }
+    else{
+        for (i=0;i<10;i++){
+            if (isHighCompensatory[0][i]==1){
+                trial_idx.push(trials_51_75[i])
+            }
+            else{
+                trial_idx.push(trials_76_100[i])
+            }
+        }
+        for (i=0;i<10;i++){
+            if (isHighCompensatory[1][i]==1){
+                trial_idx.push(trials_1_25[i])
+            }
+            else{
+                trial_idx.push(trials_26_50[i])
+            }
+        }
+    }
+}
+randCond = 0.5 //Math.random();
 if (randCond<(1/3)){
     var isFullyRevealed = 0;
     var isHiddenProbability = 0;
@@ -236,7 +280,7 @@ function start_trial2(trial_nr){
 
         $("#trialNrDisplay").html(trial_nr_total);
 
-        decision_problem = generateGrid(range_nr_outcomes, range_nr_gambles)
+        decision_problem = generateGrid(range_nr_outcomes, range_nr_gambles, usePrecomputedGames)
 
         nr_acquisitions[block_nr-1][trial_nr-1]=0;
 
@@ -383,8 +427,9 @@ function handleButtonClick(choice_name,choice_value,chosen_gamble){
 }
 
 
-function generateGrid(range_nr_outcomes, range_nr_gambles){
+function generateGrid(range_nr_outcomes, range_nr_gambles, usePrecomputedGames){
     
+
     probabilities=new Array(nr_outcomes);
     payoffs=new Array(nr_outcomes);
     revealed = new Array(nr_outcomes);
@@ -392,6 +437,7 @@ function generateGrid(range_nr_outcomes, range_nr_gambles){
     mus = new Array(nr_gambles);
     sigmas = new Array(nr_gambles);
     PRs = new Array(nr_outcomes)
+    upg = 0;
     for (o=0;o<nr_outcomes;o++){        
         payoffs[o]=new Array(nr_gambles);
         revealed[o] = new Array(nr_gambles+1);
@@ -403,52 +449,67 @@ function generateGrid(range_nr_outcomes, range_nr_gambles){
         else {
             revealed[o][0] = 0;
         }
-        reveal_order[o][0] = 0;         
+        reveal_order[o][0] = 0;  
         for (g=0;g<nr_gambles;g++){
-            payoffs[o][g] = parseFloat(Math.round(randn_trunc(payoff_mu,payoff_std,payoff_range)*100)/100).toFixed(2)
+            if (usePrecomputedGames==1){
+                isHighCompensatory[block_nr-1][trial_nr-1]
+                payoffs[o][g] = parseFloat(preset100_game_rewards[upg][trial_idx[trial_nr_total-1]-1]).toFixed(2);
+                upg++;
+            }
+            else{
+                payoffs[o][g] = parseFloat(Math.round(randn_trunc(payoff_mu,payoff_std,payoff_range)*100)/100).toFixed(2);
+            }
             mus[g] = payoff_mu;
             sigmas[g] = payoff_std;
             revealed[o][g+1] = isFullyRevealed;
             reveal_order[o][g+1] = 0; 
         }
     }
-    // force every probability to be >= 1/100?
-    psumsum = 0;
-    cont = true;
-    while (psumsum != 1 || cont){
+    
+    if (usePrecomputedGames==1){
+        for (o=0;o<nr_outcomes;o++){
+            probabilities[o] = preset100_probabilities[o][trial_idx[trial_nr_total-1]-1];
+        }
+    }
+    else{
+        // force every probability to be >= 1/100?
+        psumsum = 0;
         cont = true;
-        psumsum = 0;
-        psum = 0;
-        for (o=0;o<nr_outcomes;o++){
-            prob = 0;
-            while (prob==0){
-                prob = Math.round(Math.random()*100)/100;
-            }
-            probabilities[o]=prob;
-            psum+=probabilities[o];
-        }
-        psumsum = 0;
-        for (o=0;o<nr_outcomes;o++){
-            if (probabilities[o]<0.01){
-                cont = true;
-            }
-        }
-        for (o=0;o<nr_outcomes;o++){   
-            probabilities[o] = Math.round(probabilities[o]/psum*100)/100;
-            psumsum+=probabilities[o];
-        }
-        if (isHighCompensatory[block_nr-1][trial_nr-1]){
+        while (psumsum != 1 || cont){
+            cont = true;
+            psumsum = 0;
+            psum = 0;
             for (o=0;o<nr_outcomes;o++){
-                if (probabilities[o]>=0.85){
-                    cont = false
+                prob = 0;
+                while (prob==0){
+                    prob = Math.round(Math.random()*100)/100;
+                }
+                probabilities[o]=prob;
+                psum+=probabilities[o];
+            }
+            psumsum = 0;
+            for (o=0;o<nr_outcomes;o++){
+                if (probabilities[o]<0.01){
+                    cont = true;
                 }
             }
-        }
-        else{
-            cont = false
-            for (o=0;o<nr_outcomes;o++){
-                if (probabilities[o]>=0.4 || probabilities[o]<=0.1){
-                    cont = true
+            for (o=0;o<nr_outcomes;o++){   
+                probabilities[o] = Math.round(probabilities[o]/psum*100)/100;
+                psumsum+=probabilities[o];
+            }
+            if (isHighCompensatory[block_nr-1][trial_nr-1]){
+                for (o=0;o<nr_outcomes;o++){
+                    if (probabilities[o]>=0.85){
+                        cont = false
+                    }
+                }
+            }
+            else{
+                cont = false
+                for (o=0;o<nr_outcomes;o++){
+                    if (probabilities[o]>=0.4 || probabilities[o]<=0.1){
+                        cont = true
+                    }
                 }
             }
         }
@@ -728,6 +789,7 @@ function saveAnswers(){
         RTs: RTs,
         instructionQuizTime: quizTime,
         experimentTime: experimentTime,
+        trial_idx: trial_idx,
         basic_info: basic_info/////
     }
                 

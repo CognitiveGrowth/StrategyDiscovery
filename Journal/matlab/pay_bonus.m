@@ -2,7 +2,8 @@
 %addpath('~/Dropbox/PhD/MatlabTools/parse_json/')
 %filename_metadata = '~/Dropbox/mouselab_cogsci17/data/mouselab_cogsci17_metadata.csv';
 
-%load ../data/Mouselab_data.mat
+datdir = 'fullyRevealed_100uniqueTrials';
+load(['../data/',datdir,'/Mouselab_data_Experiment.mat']);
 
 for s = 1:length(data_by_sub)
     if ~isfield(data_by_sub{s},'bonus')
@@ -37,12 +38,12 @@ for s=1:numel(worker_IDs)
     bonus_file=[bonus_file, bonus_commands{s},';'];
 end
 
-filename=['payBonuses.sh'];
+filename=['payBonuses_',datdir,'.sh'];
 unix(['rm ',filename])
 fid = fopen(filename, 'w');
 % print a title, followed by a blank line
 fprintf(fid, bonus_file);
 fclose(fid)
 unix(['chmod u+x ',filename])
-unix(['mv ',filename,' ../data/pilot_3conditions/',filename])
+unix(['mv ',filename,' ../data/',datdir,'/',filename])
 
