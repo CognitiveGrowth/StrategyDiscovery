@@ -24,7 +24,7 @@ var range_nr_gambles = [7, 7];
 var isHighCompensatory = new Array();
 isHighCompensatory[0] = shuffle([1,1,1,1,1,0,0,0,0,0]);
 isHighCompensatory[1] = shuffle([1,1,1,1,1,0,0,0,0,0]);
-var nr_trials = 20;
+var nr_trials = 20; // If usePrecomputedGames==1, it's only setup to handle 20 trials
 var question_nr=1;
 var nr_questions=6;
 correct_answers = [1,1,0,1,1,1];
@@ -82,24 +82,34 @@ if (usePrecomputedGames==1){
         }
     }
 }
-randCond = 0.5 //Math.random();
-if (randCond<(1/3)){
+randCond = Math.random();
+if (randCond<(1/2)){
     var isFullyRevealed = 0;
     var isHiddenProbability = 0;
+    var isNoCost = 0;
     condStr = '';
 }
-else if (randCond>=(1/3) && randCond<(2/3)){
-    var isFullyRevealed = 1;
-    var isHiddenProbability = 0;
-    var nr_questions=5;
-    correct_answers = [1,0,1,1,1];
-    condStr = '_isFullyRevealed';
-}
-else{
+else {
     var isFullyRevealed = 0;
-    var isHiddenProbability = 1;
-    condStr = '_isHiddenProbability';
+    var isHiddenProbability = 0;
+    var isNoCost = 1;
+    condStr = '_isNoCost';
 }
+//else if (randCond>=(1/3) && randCond<(2/3)){
+//    var isFullyRevealed = 1;
+//    var isHiddenProbability = 0;
+//    var isNoCost = 0;
+//    var nr_questions=5;
+//    correct_answers = [1,0,1,1,1];
+//    condStr = '_isFullyRevealed';
+//}
+//else if (randCond>=(2/3) && randCond<1){
+//    var isFullyRevealed = 0;
+//    var isHiddenProbability = 1;
+//    var isNoCost = 0;
+//    condStr = '_isHiddenProbability';
+//}
+
 //var isFullyRevealed = 1;//Math.round(Math.random());
 //var isHiddenProbability = 0;//Math.round(Math.random());
 
@@ -162,6 +172,13 @@ function scoreQuiz(){
         $("input[name='Quiz4_isHiddenProbability"+"']:checked").val()==correct_answers[3] &&
         $("input[name='Quiz5_isHiddenProbability"+"']:checked").val()==correct_answers[4] &&
         $("input[name='Quiz6_isHiddenProbability"+"']:checked").val()==correct_answers[5]
+       ) ||
+        (isNoCost==1 && $("input[name='Quiz1_isNoCost"+"']:checked").val()==correct_answers[0] && 
+        $("input[name='Quiz2_isNoCost"+"']:checked").val()==correct_answers[1] &&
+        $("input[name='Quiz3_isNoCost"+"']:checked").val()==correct_answers[2] &&
+        $("input[name='Quiz4_isNoCost"+"']:checked").val()==correct_answers[3] &&
+        $("input[name='Quiz5_isNoCost"+"']:checked").val()==correct_answers[4] &&
+        $("input[name='Quiz6_isNoCost"+"']:checked").val()==correct_answers[5]
        ))
     {
         $("#Quiz"+condStr).hide()
@@ -622,15 +639,17 @@ function update_pseudorewards(matrices,dp){
         }
         dp.revealed[r][c] = true;
         dp.reveal_order[r][c] = sample_nr;
-        clickCost++
         nr_observations++
-        if (clickCost<10){
-            $("#ClickCost").html(["Click cost: $0.0"+clickCost]);
+        if (isNoCost!=1){
+            clickCost++
+            if (clickCost<10){
+                $("#ClickCost").html(["Click cost: $0.0"+clickCost]);
+            }
+            else{
+                $("#ClickCost").html(["Click cost: $0."+clickCost]);
+            }
+            $("#ClickCost").fadeIn();
         }
-        else{
-            $("#ClickCost").html(["Click cost: $0."+clickCost]);
-        }
-        $("#ClickCost").fadeIn();
     }
     
     decision_problem = dp; // make sure the update is global
@@ -708,7 +727,12 @@ function hasChosen(gamble){
             }
             else{
                 outcome_html=["The sampled ball is: "+ball_html+"&nbsp;&nbsp;&nbsp;You won $"+feedback[block_nr-1][trial_nr-1]]
-                clickCost_html = ["Net earnings (winning minus click costs): <font color='green'><b>$"+net_pay+"</b></font>"]
+                if (condStr == '_isNoCost'){
+                    clickCost_html = []
+                }
+                else{
+                    clickCost_html = ["Net earnings (winning minus click costs): <font color='green'><b>$"+net_pay+"</b></font>"]
+                }
             }
             //win_sound.play();
         }
@@ -773,7 +797,8 @@ function saveAnswers(){
         isHighCompensatory: isHighCompensatory,
         failed_quiz: failed_quiz,
         isFullyRevealed: isFullyRevealed,
-        isHiddenProbability: isHiddenProbability
+        isHiddenProbability: isHiddenProbability,
+        isNoCost: isNoCost
     }
     
     data={           
@@ -790,6 +815,8 @@ function saveAnswers(){
         instructionQuizTime: quizTime,
         experimentTime: experimentTime,
         trial_idx: trial_idx,
+        preset100_game_rewards: preset100_game_rewards,
+        preset100_probabilities: preset100_probabilities,
         basic_info: basic_info/////
     }
                 

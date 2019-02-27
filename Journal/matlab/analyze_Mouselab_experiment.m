@@ -3,8 +3,8 @@ addpath('~/Dropbox/PhD/MatlabTools/')
 addpath('~/Dropbox/PhD/MatlabTools/parse_json/')
 clear
 
-load(['../data/fullyRevealed_100uniqueTrials/Mouselab_data_Experiment.mat'])
-% load(['../data/3conditions_300subjects/Mouselab_data_Experiment_condition2.mat'])
+% load(['../data/fullyRevealed_100uniqueTrials/Mouselab_data_Experiment.mat'])
+load(['../data/3conditions_300subjects/Mouselab_data_Experiment_condition1.mat'])
 % load(['../data/03242018/Mouselab_data_Experiment2.mat']) 3conditions_300subjects
 
 % experiment_nr = 2;
@@ -620,3 +620,64 @@ set(gca,'ylim',[0 nr_trial_per_condition],'ytick',[0:nr_trial_per_condition/4:nr
 % data.EV_chosen_gamble_equals_maxEV(sub,b,t)
 % data.EVbest_minus_EVchosen_over_EVbest(sub,b,t)
 % data.EV_chosen_rank(sub,b,t)
+
+%%
+clear rewards_high_stakes rewards_low_stakes rewards rewards_low_stakes_low_dispersion rewards_low_stakes_high_dispersion
+
+for s = 1:length(data.netPay)
+    tt=0;
+    tth=0;
+    ttl=0;
+    ttll=0;
+    ttlh=0;
+    for b = 1:length(data.feedback{s})
+        for t = 1:length(data.feedback{s}{b})
+            tt=tt+1;
+            if data.high_stakes(s,b)
+                tth=tth+1;
+                rewards_high_stakes(s,tth) = str2num(data.netPay{s}{tt});
+            else
+                ttl=ttl+1;
+                rewards_low_stakes(s,ttl) = str2num(data.netPay{s}{tt});
+                if data.high_dispersion(s,b,t)
+                    ttlh=ttlh+1;
+                    rewards_low_stakes_high_dispersion(s,ttlh) = str2num(data.netPay{s}{tt});
+                else
+                    ttll=ttll+1;
+                    rewards_low_stakes_low_dispersion(s,ttll) = str2num(data.netPay{s}{tt});
+                end
+            end
+            
+                rewards(s,tt) = str2num(data.netPay{s}{tt});
+        end
+    end
+end
+
+figure; hold on
+errorbar(1:size(rewards_high_stakes,2),mean(rewards_high_stakes),sem(rewards_high_stakes))
+errorbar(1:size(rewards_low_stakes,2),mean(rewards_low_stakes),sem(rewards_low_stakes))
+errorbar(1:size(rewards,2),mean(rewards),sem(rewards))
+legend('high stakes','low stakes','both')
+xlabel('trials')
+ylabel('reward')
+
+figure; hold on
+errorbar(1:size(rewards_low_stakes_high_dispersion,2),mean(rewards_low_stakes_high_dispersion),sem(rewards_low_stakes_high_dispersion))
+errorbar(1:size(rewards_low_stakes_low_dispersion,2),mean(rewards_low_stakes_low_dispersion),sem(rewards_low_stakes_low_dispersion))
+legend('low stakes, high dispersion','low stakes, low dispersion')
+xlabel('trials')
+ylabel('reward')
+
+figure; hold on
+errorbar(1:size(data.nr_acquisitions_high_stakes,2),mean(data.nr_acquisitions_high_stakes),sem(data.nr_acquisitions_high_stakes))
+errorbar(1:size(data.nr_acquisitions_low_stakes,2),mean(data.nr_acquisitions_low_stakes),sem(data.nr_acquisitions_low_stakes))
+legend('high stakes','low stakes','both')
+xlabel('trials')
+ylabel('number of clicks')
+
+figure; hold on
+plot(data.nr_acquisitions_high_stakes')
+plot(data.nr_acquisitions_low_stakes')
+legend('high stakes','low stakes','both')
+xlabel('trials')
+ylabel('number of clicks')
