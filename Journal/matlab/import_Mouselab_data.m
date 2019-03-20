@@ -1,5 +1,5 @@
 % filename=['../data/05302018/DataExp',int2str(experiment_nr),'JSON.csv'];
-experiment_nr = '3conditions_300subjects';
+experiment_nr = '2conditions_costNoCost_210subjects_100uniqueTrials';
 filter_by_condition = 3;
 filename=['../data/',experiment_nr,'/experiment_results.csv'];
 % filename_metadata=['../data/',experiment_nr,'/MetaData.csv'];

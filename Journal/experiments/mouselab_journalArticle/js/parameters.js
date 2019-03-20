@@ -27,7 +27,7 @@ else{
     Block1_stakes = "High-stakes"
     Block2_stakes = "Low-stakes"
 }
-instructions = '1. Some games have low-stakes and some games have high-stakes. For low-stakes games, the range of possible earnings is $0.01 at least to $0.25 at most. For high-stakes games, the range of possible winnings is $0.01 at least to $9.99 at most. The last example was high-stakes. <b>The first 10 games will be <u>'+block1_stakes+'</u> and the last 10 games will be <u>'+block2_stakes+'</u></b>.'
+instructions = '1. Some games have low-stakes and some games have high-stakes. For low-stakes games, the range of possible earnings is $0.01 at least to $0.25 at most. For high-stakes games, the range of possible winnings is $0.01 at least to $9.99 at most. The last example was high-stakes. <b>The first 10 games will be <u>'+block1_stakes+'</u> and the last 10 games will be <u>'+block2_stakes+'</u></b>. Your bonus payment will be determined by selecting one of your winnings from '+block1_stakes+' games and one of your winnings from '+block2_stakes+' games, and averaging the two.'
 $("#instructions_text").html(" hi! ");
 
 nr_blocks=2;
