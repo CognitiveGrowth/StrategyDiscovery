@@ -1,3 +1,39 @@
+
+clear rewards_high_stakes rewards_low_stakes rewards rewards_low_stakes_low_dispersion rewards_low_stakes_high_dispersion
+rewards_low_stakes_high_dispersion = [];
+rewards_low_stakes_low_dispersion = [];
+for s = 1:length(data.netPay)
+    tt=0;
+    tth=0;
+    ttl=0;
+    ttll=0;
+    ttlh=0;
+    for b = 1:length(data.feedback{s})
+        for t = 1:length(data.feedback{s}{b})
+            tt=tt+1;
+            if data.high_stakes(s,b)
+                tth=tth+1;
+                rewards_high_stakes(s,tth) = str2num(data.netPay{s}{tt});
+            else
+                ttl=ttl+1;
+                rewards_low_stakes(s,ttl) = str2num(data.netPay{s}{tt});
+                if data.high_dispersion(s,b,ceil(tt/2))
+                    ttlh=ttlh+1;
+                    rewards_low_stakes_high_dispersion(s,ttlh) = str2num(data.netPay{s}{tt});
+                else
+                    ttll=ttll+1;
+                    rewards_low_stakes_low_dispersion(s,ttll) = str2num(data.netPay{s}{tt});
+                end
+            end
+            
+                rewards(s,tt) = str2num(data.netPay{s}{tt});
+        end
+    end
+end
+
+
+
+
 nr_sub = 200;
 
 consistent_with_SAT_TTB = zeros(nr_sub,2,2);
