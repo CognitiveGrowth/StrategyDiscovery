@@ -1,8 +1,8 @@
 # %% ==================== Setup ====================
-
-if !endswith(pwd(), "StrategyDiscovery/Journal/julia")
-    cd("StrategyDiscovery/Journal/julia")
-end
+#
+# if !endswith(pwd(), "StrategyDiscovery/Journal/julia")
+#     cd("StrategyDiscovery/Journal/julia")
+# end
 
 const TEST = !isempty(ARGS) && ARGS[1] == "test"
 if TEST

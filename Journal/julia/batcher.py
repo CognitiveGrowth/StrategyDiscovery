@@ -20,6 +20,7 @@ SBATCH_SCRIPT = '''
 #SBATCH --output=runs/{job_name}/out/%A_%a
 #SBATCH --array=1-{n_job}
 #SBATCH --time={max_time}
+#SBATCH --mem-per-cpu=5000
 #SBATCH --cpus-per-task={cpus_per_task}
 
 module load julia
@@ -31,7 +32,7 @@ def params(quick):
         'compensatory': [False, True],
         'stakes': ['high', 'low'],
         'seed': [1],
-        'cost': list(0.01 * np.exp(np.arange(0, 3.1, 0.2))),
+        'cost': np.logspace(np.log(0.001), np.log(0.2), base=np.e, num=40).round(5).tolist(),
         'voi_features': [
             # [1, 4],
             [1, 2, 4],
@@ -48,7 +49,7 @@ def params(quick):
 @click.argument('max-time')
 @click.option('--quick', is_flag=True)
 # @click.option('--mem-per-cpu', default=5000)
-@click.option('--cpus-per-task', default=4)
+@click.option('--cpus-per-task', default=1)
 def main(job_name, quick, **slurm_args):
     os.makedirs(f'runs/{job_name}/jobs', exist_ok=True)
     os.makedirs(f'runs/{job_name}/out', exist_ok=True)

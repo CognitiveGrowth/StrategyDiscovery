@@ -56,25 +56,18 @@ end
     end
 end
 
-function observe_gamble(b, gamble)
+function observe_several(b, cs)
     b = deepcopy(b)
-    for c in CELLS[:, gamble]
+    for c in cs
         if !observed(b, c)
             observe!(b, c)
         end
     end
-    b
+    return b
 end
 
-function observe_outcome(b, outcome)
-    b = deepcopy(b)
-    for c in CELLS[outcome, :]
-        if !observed(b, c)
-            observe!(b, c)
-        end
-    end
-    b
-end
+observe_gamble(b, gamble) = observe_several(b, CELLS[:, gamble])
+observe_outcome(b, outcome) = observe_several(b, CELLS[outcome, :])
 
 #%% ========== Tests ==========
 
@@ -162,7 +155,7 @@ end
 @testset "policy" begin
     pol = Policy([0; ones(4) ./ 4])
     rollout(pol, rand_problem())
-
+end
 #%% ========== Scratch ==========
 
 # @testset "meta greedy" begin

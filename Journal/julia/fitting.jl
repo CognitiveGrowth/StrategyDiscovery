@@ -1,26 +1,30 @@
-if !endswith(pwd(), "StrategyDiscovery/Journal/julia")
-    cd("StrategyDiscovery/Journal/julia")
-end
+# if !endswith(pwd(), "StrategyDiscovery/Journal/julia")
+#     cd("StrategyDiscovery/Journal/julia")
+# end
 include("model.jl")
 using Optim
 
 using StatsBase
 using Plots
+using SplitApplyCombine
+using TypedTables
 
 # %% ====================  ====================
-no_click_pol = Policy([1.; zeros(4)])
-meta_greedy_pol = Policy([0., 1., 0., 0., 0.])
+no_click_pol = BMPSPolicy([1.; zeros(4)])
+meta_greedy_pol = BMPSPolicy([0., 1., 0., 0., 0.])
 gdf = groupby(df, :workerid)
 
 function load_policies()
-    policies = DefaultDict{Float64, DefaultDict{Cond, Policy}}(()->
-        DefaultDict{Cond, Policy}(()->no_click_pol)
+    policies = DefaultDict{Float64, DefaultDict{Cond, BMPSPolicy
+    }}(()->
+        DefaultDict{Cond, BMPSPolicy
+            }(()->no_click_pol)
     )
     for file in glob("runs/$JOBNAME/results/opt*.jld")
         result = load(file, "opt_result")
         cost = result[:prm].cost
         cond = condition(result[:prm])
-        policies[cost][cond] = Policy(result[:theta])
+        policies[cost][cond] = BMPSPolicy(result[:theta])
     end
     policies[Inf]  # this creates the Dict for infinite cost
     Dict(policies)
@@ -31,10 +35,12 @@ COSTS = collect(keys(POLICIES))
 sort!(COSTS)
 
 
-# %% ====================  ====================
+# %% ==================== BMPS likelihood ====================
+
+change_cost(b::Belief, cost) = Belief(b.matrix, b.weights, cost)
 
 function model_prob(d::Datum, cost::Float64, pol::Policy)
-    b = Belief(d.b.matrix, d.b.weights, cost)
+    b = change_cost(d.b, cost)
     v = [0; voc(pol, b)]
     is_opt = maximum(v) .- v .< 0.001
     is_opt[d.c+1] / sum(is_opt)
@@ -43,25 +49,11 @@ end
 opt_prob(d, cost) = model_prob(d, cost, POLICIES[cost][d.cond])
 greedy_prob(d, cost) = model_prob(d, cost, meta_greedy_pol)
 rand_prob(d::Datum) = 1 / (length(unobserved(d.b)) + 1)
-
 logp(ε, p_opt, p_rand) = sum(@. log((1-ε) * p_opt + ε * p_rand))
 
-# %% ==================== Simulate data with metagreedy ====================
-
-function simulate(pol)
-    data = Datum[]
-    for row in eachrow(df)
-        rollout(pol, row.problem, callback=(b,c)->push!(data, Datum(deepcopy(b), c, row.cond)))
-        model_prob(data[2], 0.01, pol)
-    end
-    data
-end
-
-greedy_sim = simulate(meta_greedy_pol)
-greedy_best_logp = sum(log(model_prob(d, 0.01, meta_greedy_pol)) for d in greedy_sim) / length(greedy_sim)
 
 
-# %% ====================  ====================
+# %% ==================== Optimal and greedy ====================
 
 function fit_model(df::AbstractDataFrame, model::Function)
     dd = parse_data(df)
@@ -78,92 +70,88 @@ function fit_model(df::AbstractDataFrame, model::Function)
             logp=-ε_fits[i].minimum, rand_logp=sum(log.(p_rand)))
 end
 
-# %% ====================  ====================
-function softmax(x)
-    ex = exp.(x .- maximum(x))
-    ex ./= sum(ex)
-    ex
-end
-
-function value(d::Datum, cost::Float64, pol::Policy)
-    b = Belief(d.b.matrix, d.b.weights, cost)
-    [0; voc(pol, b)]
-end
-
-function soft_p(v, c, p_rand; α, ε)
-    p = softmax(α * v)[c]
-    max(0, (1-ε) * p + ε * p_rand)
-end
-
-function fit_softmax(df::AbstractDataFrame)
-    dd = parse_data(df)
-    p_rand = rand_prob.(dd)
-    lower, upper, init = [0., 1e-5], [10000., 1.], [0.01, 0.99]
-    fits = map(COSTS) do cost
-        V = [value(d, cost, meta_greedy_pol) for d in dd]
-        cs = [d.c+1 for d in dd]
-        f(x) = -sum(log(soft_p(V[i], cs[i], p_rand[i], α=x[1], ε=x[2]))
-                   for i in 1:length(dd))
-        res = optimize(f, lower, upper, init, Fminbox(BFGS()))
-        res
-    end
-    i = argmin([res.minimum for res in fits])
-    α, ε = fits[i].minimizer
-    return (cost=COSTS[i], ε=ε, α=α,
-            logp=-fits[i].minimum, rand_logp=sum(log.(p_rand)))
-end
-
-# %% ====================  ====================
-@time results = map(1:length(gdf)) do i
+@time opt_results = map(1:length(gdf)) do i
     fit_model(gdf[i], opt_prob)
-end
+end |> Table
 @time greedy_results = map(1:length(gdf)) do i
     fit_model(gdf[i], greedy_prob)
-end
-@time soft_results = map(1:length(gdf)) do i
-    fit_softmax(gdf[i])
+end |> Table
+
+# %% ==================== Directed Cognition ====================
+
+include("directed_cognition.jl")
+Base.startswith(x::Vector, prefix::Vector) = begin
+    length(prefix) > length(x) && return false
+    x[1:length(prefix)] == prefix
 end
 
-using SplitApplyCombine
-k = 2 * 100
-res = invert(results)
-gres = invert(greedy_results)
-sres = invert(soft_results)
-println("Optimal: ", 2k - 2sum(res.logp))
-println("Greedy:  ", 2k - 2sum(gres.logp))
-println("Soft:  ", 600 - 2sum(sres.logp))
-println("Random: ", -2sum(res.rand_logp))
+# We do some tricky stuff here to avoid recomputing dc_options
+# repeatedly for different costs and ε values during fitting.
+using Memoize
+@memoize mem_dc_options(b::Belief) = dc_options(b, cost=0.)
+function dc_option_values(b::Belief, cost)
+    options = mem_dc_options(b)
+    v, cs = invert(options)
+    v[1:end-1] -= length.(cs[1:end-1]) * cost  # last one is alway TERM, no cost
+    return v, cs
+end
 
-all_data = parse_data(df)
-round(exp(sum(gres.logp) / length(all_data)), digits=3)
-round(exp(sum(sres.logp) / length(all_data)), digits=3)
-round(exp(sum(sres.rand_logp) / length(all_data)), digits=3)
+function dc_logp(trial::Vector{Datum}; cost=0.01, α=1e10, ε=0.0)
+    trial_cs = [d.c for d in trial]
+    function rec(i)
+        i > length(trial) && return 1.
+        d = trial[i]
+        tcs = trial_cs[i:end]
+        v, cs = dc_option_values(d.b, cost)
+        probs = softmax(v * α)
+        p_acc = 0.
+        for (p, c) in zip(probs, cs)
+            if p > 0 && startswith(tcs, c)
+                p_acc += (1-ε) * p * rec(i + length(c))
+            end
+        end
+        p_acc += ε * rand_prob(d) * rec(i + 1)
+        return p_acc
+    end
+    log(rec(1))
+end
+
+function fit_dc(df::AbstractDataFrame)
+    trials = [parse_data(t) for t in groupby(df, :trial_index)]
+    lower, upper, init = [0.], [1.], [0.99]
+    ε_fits = map(COSTS) do cost
+        f(x) = -sum(dc_logp.(trials; ε=x[1], cost=cost))
+        optimize(f, lower, upper, init, Fminbox(BFGS()), autodiff=:forward)
+    end
+    i = argmin([res.minimum for res in ε_fits])
+    return (cost=COSTS[i], ε=ε_fits[i].minimizer[1], ε_fits=ε_fits,
+            logp=-ε_fits[i].minimum)
+end
+
+@time dc_results = map(1:length(gdf)) do i
+    @time fit_dc(gdf[i])
+end
+
+# %% ==================== Comparison ====================
+bic(n, k, ℓ) = log(n)k - 2ℓ
+
+function print_result(name, k, results)
+    @printf "%10s %5.1f\n" name 2k - 2sum(invert(results).logp)
+end
+function print_result(name, aic)
+    @printf "%10s %5.1f\n" name aic
+end
+println("="^80)
+print_result("Greedy", k, greedy_results)
+print_result("Optimal", k, opt_results)
+print_result("DC", k, dc_results)
+print_result("Random", -2sum(invert(opt_results).rand_logp))
 
 # %% ====================  ====================
-
-function payoff(row)
-    X = reshape(row.ground_truth, 4, 7)
-    # X = reshape(row.ground_truth, 7, 4)
-    payoffs = row.outcome_probs' * X
-    payoffs[row.decision]
-end
-
-function reward(row)
-    payoff(row) - 0.01 * row.n_clicks
-end
-df.payoff = map(payoff, eachrow(df))
-df.reward = map(reward, eachrow(df))
-
-using GroupedErrors
-@> df begin
-    @splitby _.cond
-    @across _.trial_index
-    @x _.trial_index
-    @y _.reward
-    @plot plot(legend=:bottomright)
-end
-png("meta-reward")
-
+println("Optimal: ", 2k - 2sum(invert(opt_results).logp))
+println("Greedy:  ", 2k - 2sum(invert(greedy_results).logp))
+println("DC:      ", 2k - 2sum(invert(dc_results).logp))
+println("Random:  ", -2sum(invert(opt_results).rand_logp))
 
 # %% ====================  ====================
 cost_counts = countmap(getfield.(results, :cost))
@@ -219,12 +207,6 @@ opt_prob.(parse_data(gdf[subj][1, :]), results[subj].cost)
 errors = dd[op .== 0]
 soft_results[1]
 
-Base.show(io::IO, mime::MIME"text/plain", d::Datum) = begin
-    comp = d.cond[1] ? "" : "Non-"
-    stakes = d.cond[2] ? "High" : "Low"
-    println("     $(comp)Compensatory - $stakes Stakes")
-    show_belief(d.b, d.c)
-end
 
 function optimal_action(subj::Int, dd::Datum)
     pol = POLICIES[results[subj].cost][dd.cond]

@@ -6,6 +6,12 @@ const TERM = 0  # termination action
 # const NULL_FEATURES = -1e10 * ones(4)  # features for illegal computation
 const N_SAMPLE = 10000
 const N_FEATURE = 5
+
+function softmax(x)
+    ex = exp.(x .- maximum(x))
+    ex ./= sum(ex)
+    ex
+end
 # =================== Problem =================== #
 
 "Parameters defining a class of mouselab problems."
@@ -108,6 +114,11 @@ function observe!(b::Belief, p::Problem, i::Int)
     @assert b.matrix[i].σ > 1e-10
     b.matrix[i] = Normal(p.matrix[i], 1e-20)
 end
+function observe(b::Belief, p::Problem, c::Int)::Belief
+    b1 = deepcopy(b)
+    observe!(b1, p, c)
+    b1
+end
 
 "Update a belief by sampling the value of a cell."
 function observe!(b::Belief, i::Int)
@@ -117,13 +128,12 @@ function observe!(b::Belief, i::Int)
     # with an extremeley low variance.
     b.matrix[i] = Normal(val, 1e-20)
 end
-
-"Returns a new Belief after sampling the value of a cell"
 function observe(b::Belief, c::Int)::Belief
     b1 = deepcopy(b)
     observe!(b1, c)
     b1
 end
+
 
 observed(b::Belief, cell::Int) = b.matrix[cell].σ == 1e-20
 unobserved(b::Belief) = filter(c -> !observed(b, c), 1:length(b.matrix))
@@ -135,6 +145,9 @@ end
 
 get_index(b::Belief, c::Int) = Tuple(CartesianIndices(size(b.matrix))[c])
 
+choice_values(p::Problem) = p.weights' * p.matrix
+choice_values(b::Belief) = b.weights' * mean.(b.matrix)
+choice_probs(b::Belief; α=1e20) = softmax(α * choice_values(b))[:]
 # =================== Features =================== #
 
 "Define basic arithmetic operations on Normal distributions."
@@ -256,15 +269,19 @@ function features(b::Belief; skip=falses(4))
 end
 
 # ========== Policy ========== #
+abstract type Policy end
+
+
 "A metalevel policy that uses the BMPS features"
-struct Policy
+struct BMPSPolicy <:Policy
     θ::Vector{Float64}
 end
-"Selects a computation to perform in a given belief.
-    e.g. Policy(θ)(b) -> c
-"
+
 voc(π, b) = (π.θ' * features(b; skip=π.θ[2:end] .== 0.))' .- b.cost
-(π::Policy)(b::Belief) = begin
+"Selects a computation to perform in a given belief.
+e.g. BMPSPolicy(θ)(b) -> c
+"
+(π::BMPSPolicy)(b::Belief) = begin
     # voc = (π.θ' * features(b; skip=π.θ[2:end] .== 0.))' .- b.cost
     noise = 1e-10 * rand(length(b.matrix))
     v, c = findmax(voc(π, b) .+ noise)

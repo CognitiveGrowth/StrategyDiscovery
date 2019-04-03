@@ -1,6 +1,5 @@
 using Distributed
 using Glob
-using JLD
 using DataStructures: DefaultDict
 using Printf
 import CSV
@@ -8,23 +7,22 @@ import JSON
 using DataFrames
 using DataFramesMeta
 using Dates
+using Serialization
+
+file = "../data/2conditions_costNoCost_210subjects_100uniqueTrials/experiment_results.csv"
+raw_data = CSV.File(file; header=0)
 
 
 
-if !endswith(pwd(), "StrategyDiscovery/Journal/julia")
-    cd("StrategyDiscovery/Journal/julia")
-end
-1
 @everywhere include("mouselab.jl")
 
-const JOBNAME = "iguana"
+const JOBNAME = "jaguar"
 
 import Base
 Base.map(f, d::AbstractDict) = [f(k,v) for (k,v) in d]
-
+change_cost(b::Belief, cost) = Belief(b.matrix, b.weights, cost)
 
 # %% ==================== Model ID ====================
-#
 
 
 struct MID
@@ -39,17 +37,17 @@ MID(prm::Params) = MID(
 )
 MID(p::Problem) = MID(p.prm)
 Params(id::MID) = Params(
-    reward_dist=exp_dist(id.high_stakes ? "high" : "low"),
     compensatory=id.compensatory,
+    reward_dist=exp_dist(id.high_stakes ? "high" : "low"),
     cost=id.cost
 )
 
-# function name(mid::MID)
-#     comp = mid.compensatory ? "" : "Non-"
-#     stakes = mid.high_stakes ? "High" : "Low"
-#     cmult = prm.cost / 0.01
-#     "$(comp)Compensatory - $stakes Stakes - $(cmult)x Cost"
-# end
+function name(mid::MID)
+    comp = mid.compensatory ? "" : "Non-"
+    stakes = mid.high_stakes ? "High" : "Low"
+    cmult = prm.cost / 0.01
+    "$(comp)Compensatory - $stakes Stakes - $(cmult)x Cost"
+end
 
 Base.string(id::MID) = @sprintf "%d-%d-%.3f" id.compensatory id.high_stakes id.cost
 Base.show(io::IO, id::MID) = print(io, string(id))
@@ -57,16 +55,18 @@ Base.show(io::IO, id::MID) = print(io, string(id))
 # %% ==================== Load policies ====================
 
 function load_policies()
-    policies = DefaultDict{MID, Vector{Policy}}(()->[])
+    policies = DefaultDict{MID, Vector{BMPSPolicy}}(()->[])
     for file in glob("runs/$JOBNAME/results/opt*.jld")
-        result = load(file, "opt_result")
+        result = open(deserialize, file)
         id = MID(result[:prm])
-        push!(policies[id], Policy(result[:theta]))
+        println(id)
+        push!(policies[id], BMPSPolicy(result[:theta]))
     end
     Dict(policies)
 end
 
 const policies = load_policies()
+
 
 
 # %% ==================== Load human data ====================
@@ -110,9 +110,22 @@ df[:cond] = [(id.compensatory, id.high_stakes) for id in df.mid]
 struct Datum
     b::Belief
     c::Int
-    cond::Tuple{Bool, Bool}
+    cond::Cond
 end
 
+Base.show(io::IO, mime::MIME"text/plain", d::Datum) = begin
+    comp = d.cond[1] ? "" : "Non-"
+    stakes = d.cond[2] ? "High" : "Low"
+    println("     $(comp)Compensatory - $stakes Stakes")
+    show_belief(d.b, d.c)
+end
+
+function simulate(π::Policy, problem::Problem)
+    data = Datum[]
+    cond = condition(problem.prm)
+    rollout(π, problem, callback=(b,c)->push!(data, Datum(deepcopy(b), c, cond)))
+    data
+end
 
 function parse_data(row::DataFrameRow)
     result = Datum[]
@@ -124,3 +137,9 @@ function parse_data(row::DataFrameRow)
     push!(result, Datum(b, 0, row.cond))
 end
 parse_data(df::AbstractDataFrame) = vcat(parse_data.(eachrow(df))...)
+
+function softmax(x)
+    ex = exp.(x .- maximum(x))
+    ex ./= sum(ex)
+    ex
+end

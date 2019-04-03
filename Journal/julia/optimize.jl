@@ -1,5 +1,6 @@
 using Distributed
-using JLD
+# using JLD
+using Serialization
 @everywhere include("mouselab.jl")
 import Random
 using Dates: now
@@ -9,8 +10,8 @@ using LatinHypercubeSampling: LHCoptim
 
 @pyimport skopt
 # Optimizer methods
-ask(opt)::Vector{Float64} = opt[:ask]()
-tell(opt, x::Vector{Float64}, fx::Float64) = opt[:tell](Tuple(x), fx)
+ask(opt)::Vector{Float64} = opt.ask()
+tell(opt, x::Vector{Float64}, fx::Float64) = opt.tell(Tuple(x), fx)
 
 function x2θ(x, voi_features)
     cost_weight = x[1]
@@ -26,7 +27,7 @@ function max_cost(prm::Params)
     p = Problem(prm)
     b = Belief(p)
     θ = Float64[1, 0, 0, 0, 1]
-    computes() = Policy(θ)(b) != TERM
+    computes() = BMPSPolicy(θ)(b) != TERM
 
     while computes()
         θ[1] *= 2
@@ -48,7 +49,7 @@ end
 
 function avg_reward(prm, θ; n_roll=100)
     reward = @distributed (+) for i in 1:n_roll
-        π = Policy(θ)
+        π = BMPSPolicy(θ)
         rollout(π, Problem(prm), max_steps=200).reward
     end
     reward / n_roll
@@ -80,7 +81,7 @@ function optimize(prm::Params; voi_features=1:4, seed=0, n_iter=200, n_roll=1000
     end
 
     # Cross validation.
-    top_x = opt[:Xi][sortperm(opt[:yi])][1:cld(n_iter, 5)]  # top 20%
+    top_x = opt.Xi[sortperm(opt.yi)][1:cld(n_iter, 5)]  # top 20%
     top_θ = [x2θ(x, voi_features) for x in top_x]
     top_loss = loss.(top_x; nr=n_roll*10)
     perm = sortperm(top_loss)
@@ -106,8 +107,6 @@ end
 import JSON
 read_args(file) = Dict(Symbol(k)=>v for (k, v) in JSON.parsefile(file))
 
-
-
 function main(prm::Params; jobname="none", seed=nothing, opt_args...)
     println(prm)
     if seed == nothing
@@ -125,7 +124,9 @@ function main(prm::Params; jobname="none", seed=nothing, opt_args...)
     result = Dict(pairs(result))
     result[:prm] = prm
     result[:time] = now()
-    save(file, "opt_result", result)
+    open(file, "w+") do f
+        serialize(f, result)
+    end
     println("Wrote $file")
     result
 end
@@ -144,6 +145,8 @@ end
 if !isempty(ARGS)
     if ARGS[1] == "test"
         main("runs/test/jobs/1.json"; n_iter=4, n_roll=4)
+    elseif endswith(ARGS[1], "json")
+        main(ARGS[1]; verbose=true)
     else
         job_group, job_id = ARGS
         main("runs/$job_group/jobs/$job_id.json")
